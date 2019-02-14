@@ -1,0 +1,26 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
+
+#title {
+  text-align: center;
+}
+
+.controls {
+  display: flex;
+  position: absolute;
+  width: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 20px;
+  height: 100px;
+  z-index: 2;
+}
+
+.btn {
+  background-color: rgb(247, 247, 247);
+  margin: 5px;
+  width: 50%;
+}
