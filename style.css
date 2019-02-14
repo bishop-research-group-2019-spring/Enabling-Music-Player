@@ -24,3 +24,34 @@ body {
   margin: 5px;
   width: 50%;
 }
+
+.big-button{
+  display:inline-block;
+  width: 250px;
+  height: 150px;
+  margin-right:20px;
+  margin-left:20px;
+  margin-top:20px;
+  margin-bottom:20px;
+}
+
+.button-row{
+  margin-left: 60px;
+  height:170px;
+}
+
+#top-left-button{
+  background-color: red;
+}
+
+#top-right-button{
+  background-color: blue;
+}
+
+#bottom-left-button{
+  background-color: green;
+}
+
+#bottom-right-button{
+  background-color: pink;
+}
