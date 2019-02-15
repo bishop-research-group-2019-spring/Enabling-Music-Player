@@ -33,6 +33,7 @@ body {
   margin-left:20px;
   margin-top:20px;
   margin-bottom:20px;
+  text-align:center;
 }
 
 .button-row{
@@ -54,4 +55,14 @@ body {
 
 #bottom-right-button{
   background-color: pink;
+}
+
+.inline{
+  display:inline-block;
+}
+
+.button-text{
+  padding-top:40px;
+  color:white;
+  font-size:35px;
 }
