@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Music Player</title>
+    <title>Enabling Music Player</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -12,13 +12,12 @@
     />
     <link rel="stylesheet" href="style.css" />
     <!-- Load @magenta/music -->
-    <script src="helper.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@magenta/music@^1.0.3"></script>
-    <script src="https://cdn.jsdelivr.net/npm/file-saver"></script>
-    <script src="jquery.js"></script>
+    <!-- <script src="helper.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@magenta/music@^1.0.3"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/file-saver"></script> -->
   </head>
   <body>
-    <h3 id="title">Music Player</h3>
+    <h3 id="title">Enabling Music Player</h3>
     <hr />
     <br />
 
@@ -27,22 +26,23 @@
         <div class="list-group" id="list-tab" role="tablist">
           <a
             class="list-group-item list-group-item-action active"
-            id="guitar-list"
+            id="piano-list"
             data-toggle="list"
-            href="#guitar"
+            href="#piano"
             role="tab"
             aria-controls="home"
             >Piano</a
           >
-          <!--<a
+          <a
             class="list-group-item list-group-item-action"
-            id="bass-list"
+            id="guitar-list"
             data-toggle="list"
-            href="#bass"
+            href="#guitar"
             role="tab"
             aria-controls="profile"
-            >Bass</a
+            >Guitar</a
           >
+          <!--
           <a
             class="list-group-item list-group-item-action"
             id="drums-list"
@@ -68,20 +68,21 @@
         <div class="tab-content" id="nav-tabContent">
           <div
             class="tab-pane fade show active"
+            id="piano"
+            role="tabpanel"
+            aria-labelledby="piano-list"
+          >
+            Piano
+          </div>
+          <div
+            class="tab-pane fade"
             id="guitar"
             role="tabpanel"
             aria-labelledby="guitar-list"
           >
-            Piano
+            Guitar
           </div>
-          <!--<div
-            class="tab-pane fade"
-            id="bass"
-            role="tabpanel"
-            aria-labelledby="bass-list"
-          >
-            Bass
-          </div>
+          <!--
           <div
             class="tab-pane fade"
             id="drums"
@@ -105,42 +106,40 @@
               <p class="inline button-text">S</p>
             </div>
             <div class="big-button" id="top-right-button">
-                <p class="inline button-text">D</p>
+              <p class="inline button-text">D</p>
             </div>
           </div>
           <div class="button-row">
             <div class="big-button" id="bottom-left-button">
-                <p class="inline button-text">X</p>
+              <p class="inline button-text">X</p>
             </div>
             <div class="big-button" id="bottom-right-button">
-                <p class="inline button-text">C</p>
+              <p class="inline button-text">C</p>
             </div>
           </div>
-          
         </div>
-
       </div>
     </div>
 
     <div class="main-area">
       <div class="controls">
-        <button
-          type="button"
-          class="btn btn-outline-primary"
-        >
-          <h5>Play</h5>
+        <button type="button" class="btn btn-outline-primary">
+          <h5>Record</h5>
         </button>
-        <button
-          type="button"
-          class="btn btn-outline-success"
-        >
-          <h5>Download </h5>
+        <button type="button" class="btn btn-outline-success">
+          <h5>Download</h5>
         </button>
-        <button type="button" class="btn btn-outline-danger">3</button>
-        <button type="button" class="btn btn-outline-warning">4</button>
+        <!-- <button type="button" class="btn btn-outline-danger">3</button>
+        <button type="button" class="btn btn-outline-warning">4</button> -->
       </div>
     </div>
   </body>
+  <!-- Load WebAudioFont (Currently piano and guitar files)-->
+  <script src="https://surikov.github.io/webaudiofont/npm/dist/WebAudioFontPlayer.js"></script>
+  <script src="https://surikov.github.io/webaudiofontdata/sound/0011_FluidR3_GM_sf2_file.js"></script>
+  <script src="https://surikov.github.io/webaudiofontdata/sound/0290_Aspirin_sf2_file.js"></script>
+
+  <script src="jquery.js"></script>
   <script
     src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

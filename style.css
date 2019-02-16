@@ -2,6 +2,7 @@ html,
 body {
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
 #title {
@@ -14,55 +15,59 @@ body {
   width: 50%;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 20px;
-  height: 100px;
+  /* bottom: 20px; */
+  /* height: 100px; */
   z-index: 2;
 }
 
 .btn {
   background-color: rgb(247, 247, 247);
-  margin: 5px;
-  width: 50%;
+  margin: 3%;
+  /* width: 50%; */
 }
 
-.big-button{
-  display:inline-block;
-  width: 250px;
+.big-button {
+  display: inline-block;
+  width: 40%;
+  margin: 2%;
+  cursor: pointer;
+  /* width: 250px;
   height: 150px;
   margin-right:20px;
   margin-left:20px;
   margin-top:20px;
-  margin-bottom:20px;
-  text-align:center;
+  margin-bottom:20px; */
+  text-align: center;
 }
 
-.button-row{
-  margin-left: 60px;
-  height:170px;
+.button-row {
+  /* margin-left: 60px; */
+  height: 50%;
 }
 
-#top-left-button{
+#top-left-button {
   background-color: red;
 }
 
-#top-right-button{
+#top-right-button {
   background-color: blue;
 }
 
-#bottom-left-button{
+#bottom-left-button {
   background-color: green;
 }
 
-#bottom-right-button{
+#bottom-right-button {
   background-color: pink;
 }
 
-.inline{
-  display:inline-block;
+.inline {
+  display: inline-block;
 }
 
-.button-text{
-  padding-top:40px;
-  color:white;
-  font-size:35px;
+.button-text {
+  /* padding-top: 40px; */
+  padding: 40px 0 30px 0;
+  color: white;
+  font-size: 35px;
 }
