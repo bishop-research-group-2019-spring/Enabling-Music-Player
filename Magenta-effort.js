@@ -1,8 +1,13 @@
-console.log("inside of Magenta-effort.js script");
+var player;
+$(document).ready(function() {
+    player = new mm.Player();
+    console.log("player obj before caling playNote:");
+    console.log(player);
+})
 
 $("#top-left-button").click(() => {
-    console.log("inside of click listener");
-    player = new mm.Player();
+    mm.Player.tone.context.resume();
+
 
     DRUMS = {
         notes: [
@@ -30,6 +35,15 @@ $("#top-left-button").click(() => {
         totalQuantizedSteps: 11
     };
     
-    player.start(DRUMS);
-    console.log("after player.start(DRUMS)");
+    player.start(
+        {notes: 
+            [{ pitch: 36, quantizedStartStep: 0, quantizedEndStep: 1, isDrum: true }
+            ],
+            quantizationInfo: {stepsPerQuarter: 4},
+            tempos: [{time: 0, qpm: 120}],
+            totalQuantizedSteps:1
+        }
+    );
+    console.log(player);
+
 });
