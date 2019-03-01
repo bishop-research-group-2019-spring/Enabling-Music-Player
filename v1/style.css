@@ -1,0 +1,92 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+#title {
+  text-align: center;
+}
+
+.controls {
+  display: flex;
+  position: absolute;
+  width: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  /* bottom: 20px; */
+  /* height: 100px; */
+  z-index: 2;
+}
+
+.btn {
+  background-color: rgb(247, 247, 247);
+  margin: 3%;
+  /* width: 50%; */
+}
+
+.big-button {
+  display: inline-block;
+  width: 40%;
+  margin: 2%;
+  cursor: pointer;
+  /* width: 250px;
+  height: 150px;
+  margin-right:20px;
+  margin-left:20px;
+  margin-top:20px;
+  margin-bottom:20px; */
+  text-align: center;
+}
+
+.button-row {
+  /* margin-left: 60px; */
+  height: 50%;
+}
+
+#top-left-button {
+  background-color: red;
+}
+
+#top-right-button {
+  background-color: blue;
+}
+
+#bottom-left-button {
+  background-color: green;
+}
+
+#bottom-right-button {
+  background-color: pink;
+}
+
+.inline {
+  display: inline-block;
+}
+
+.button-text {
+  /* padding-top: 40px; */
+  padding: 40px 0 30px 0;
+  color: white;
+  font-size: 35px;
+}
+
+#bottom-button{
+  width:85%;
+  background-color: purple;
+}
+
+.audio-control{
+  width:25px;
+  height:25px;
+  margin-top:35px;
+}
+
+.audio-control:hover{
+  cursor: pointer;
+}
+
+.audio-control-holder{
+  display:inline-block;
+}
