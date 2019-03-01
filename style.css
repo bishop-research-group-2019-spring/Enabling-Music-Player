@@ -71,3 +71,22 @@ body {
   color: white;
   font-size: 35px;
 }
+
+#bottom-button{
+  width:85%;
+  background-color: purple;
+}
+
+.audio-control{
+  width:25px;
+  height:25px;
+  margin-top:35px;
+}
+
+.audio-control:hover{
+  cursor: pointer;
+}
+
+.audio-control-holder{
+  display:inline-block;
+}
