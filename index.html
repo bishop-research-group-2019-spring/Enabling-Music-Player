@@ -10,9 +10,8 @@
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="assets/style/style.css" />
     <!-- Load @magenta/music -->
-    <!-- <script src="helper.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/@magenta/music@^1.0.3"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver"></script>
   </head>
@@ -31,8 +30,9 @@
             href="#piano"
             role="tab"
             aria-controls="home"
-            >Piano</a
+            >Drums</a
           >
+          <!--
           <a
             class="list-group-item list-group-item-action"
             id="guitar-list"
@@ -42,7 +42,7 @@
             aria-controls="profile"
             >Guitar</a
           >
-          <!--
+          
           <a
             class="list-group-item list-group-item-action"
             id="drums-list"
@@ -72,7 +72,7 @@
             role="tabpanel"
             aria-labelledby="piano-list"
           >
-            Piano
+            Drums (s,d,x,c to play notes; space to get new pitches)
           </div>
           <div
             class="tab-pane fade"
@@ -117,29 +117,47 @@
               <p class="inline button-text">C</p>
             </div>
           </div>
+          <div class="button-row">
+            <div class="big-button" id="bottom-button">
+              <p class="inline button-text">(Space)</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="main-area">
       <div class="controls">
-        <button type="button" class="btn btn-outline-primary">
+        <button id="record-button" type="button" class="btn btn-outline-primary">
           <h5>Record</h5>
         </button>
         <button type="button" class="btn btn-outline-success">
           <h5>Download</h5>
         </button>
+        <button id="play-magenta" type="button" class="btn btn-outline-primary">
+          <p class="inline">Play with Magenta</p>
+        </button>
         <!-- <button type="button" class="btn btn-outline-danger">3</button>
         <button type="button" class="btn btn-outline-warning">4</button> -->
+        <div class="recording-holder">
+            <div id="recording-light">
+
+            </div>
+            <div class="audio-control-holder">
+              <img class="audio-control" src="assets/images/play-button-512.png" id="play_button">
+            </div>
+            <div class="autio-control-holder">
+
+            </div>
+            <!--<div class="audio-control-holder">
+              <img class="audio-control" src="assets/images/1_Control_pause-512.png" id="stop-button">
+            </div>-->
+        </div>
       </div>
+
     </div>
   </body>
-  <!-- Load WebAudioFont (Currently piano and guitar files)-->
-  <script src="https://surikov.github.io/webaudiofont/npm/dist/WebAudioFontPlayer.js"></script>
-  <script src="https://surikov.github.io/webaudiofontdata/sound/0011_FluidR3_GM_sf2_file.js"></script>
-  <script src="https://surikov.github.io/webaudiofontdata/sound/0290_Aspirin_sf2_file.js"></script>
-
-  <script src="jquery.js"></script>
+  <script src="assets/js/jquery.js"></script>
   <script
     src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -155,5 +173,5 @@
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"
   ></script>
-  <script src="main.js"></script>
+  <script src="assets/js/main.js"></script>
 </html>
