@@ -30,8 +30,9 @@
             href="#piano"
             role="tab"
             aria-controls="home"
-            >Piano</a
+            >Drums</a
           >
+          <!--
           <a
             class="list-group-item list-group-item-action"
             id="guitar-list"
@@ -41,7 +42,7 @@
             aria-controls="profile"
             >Guitar</a
           >
-          <!--
+          
           <a
             class="list-group-item list-group-item-action"
             id="drums-list"
@@ -71,7 +72,7 @@
             role="tabpanel"
             aria-labelledby="piano-list"
           >
-            Piano
+            Drums (s,d,x,c to play notes; space to get new pitches)
           </div>
           <div
             class="tab-pane fade"
@@ -116,21 +117,44 @@
               <p class="inline button-text">C</p>
             </div>
           </div>
+          <div class="button-row">
+            <div class="big-button" id="bottom-button">
+              <p class="inline button-text">(Space)</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="main-area">
       <div class="controls">
-        <button type="button" class="btn btn-outline-primary">
+        <button id="record-button" type="button" class="btn btn-outline-primary">
           <h5>Record</h5>
         </button>
         <button type="button" class="btn btn-outline-success">
           <h5>Download</h5>
         </button>
+        <button id="play-magenta" type="button" class="btn btn-outline-primary">
+          <p class="inline">Play with Magenta</p>
+        </button>
         <!-- <button type="button" class="btn btn-outline-danger">3</button>
         <button type="button" class="btn btn-outline-warning">4</button> -->
+        <div class="recording-holder">
+            <div id="recording-light">
+
+            </div>
+            <div class="audio-control-holder">
+              <img class="audio-control" src="play-button-512.png" id="play_button">
+            </div>
+            <div class="autio-control-holder">
+
+            </div>
+            <!--<div class="audio-control-holder">
+              <img class="audio-control" src="1_Control_pause-512.png" id="stop-button">
+            </div>-->
+        </div>
       </div>
+
     </div>
   </body>
   <script src="jquery.js"></script>
