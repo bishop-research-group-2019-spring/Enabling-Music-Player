@@ -13,7 +13,10 @@ const CONSTANTS = {
    ************************/
   class Player {
     constructor() {
-      this.player = new mm.SoundFontPlayer('https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus');
+      //this.player = new mm.SoundFontPlayer('https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus');
+       this.player = new mm.MusicVAE(
+         'https://storage.googleapis.com/download.magenta.tensorflow.org/tfjs_checkpoints/music_vae/mel_2bar_small'
+       );
       this.midiOut = [];
       this.usingMidiOut = false;
       this.selectElement = document.getElementById('selectOut');
