@@ -1,4 +1,3 @@
-var player;
 var pitches = [];
 var valid_pitches = [36, 46, 56, 76, 79, 84, 68, 78, 86, 51, 67, 54, 72, 57, 60, 84]
 var recording = [];
