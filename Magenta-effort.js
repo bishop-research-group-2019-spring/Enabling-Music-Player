@@ -74,17 +74,17 @@ var shufflePitches = () => {
 
   var playNote = (index) => {
     mm.Player.tone.context.resume();
-    let note = { pitch: pitches[index], quantizedStartStep: 0, quantizedEndStep: 1, isDrum: true };
+    let note = { pitch: pitches[index], quantizedStartStep: 0, quantizedEndStep: 1, program: 60 };
 
     if(is_recording){
         let note_in_context = {
             pitch: pitches[index], 
             quantizedStartStep: note_count, 
-            quantizedEndStep: note_count+1,
+            quantizedEndStep: note_count+2,
             isDrum: true
         }
         recording.push(note_in_context);
-        note_count = note_count + 1;
+        note_count = note_count + 3;
     }
 
     player.start(
