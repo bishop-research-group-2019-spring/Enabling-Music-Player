@@ -2,7 +2,8 @@ html,
 body {
   height: 100%;
   width: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 #title {
@@ -11,10 +12,12 @@ body {
 
 .controls {
   display: flex;
-  position: absolute;
-  width: 50%;
-  left: 50%;
-  transform: translateX(-50%);
+  width: 100%;
+  height: 15%;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  /* left: 50%; */
+  /* transform: translateX(-50%); */
   /* bottom: 20px; */
   /* height: 100px; */
   z-index: 2;
@@ -22,8 +25,7 @@ body {
 
 .btn {
   background-color: rgb(247, 247, 247);
-  margin: 3%;
-  /* width: 50%; */
+  margin: 1% 2% 2% 2%;
 }
 
 .big-button {
@@ -77,10 +79,15 @@ body {
   background-color: purple;
 }
 
+.recording-holder {
+  margin-top: 1%;
+  margin-bottom: 2%;
+}
+
 .audio-control{
-  width:25px;
+  width: 25px;
   height:25px;
-  margin-top:35px;
+  margin-top: 5px;
 }
 
 .audio-control:hover{

@@ -30,6 +30,14 @@ var instruments = {
 var instrument = instruments.drums;
 
 $(document).ready(function() {
+  // Enables overflow-y attribute for mobile devices.
+  if (
+    typeof window.orientation !== "undefined" ||
+    navigator.userAgent.indexOf("IEMobile") !== -1
+  ) {
+    $(document.body).css("overflow-y", "auto");
+  }
+
   player = new mm.SoundFontPlayer(
     "https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus"
   );
@@ -208,12 +216,7 @@ $("#record-button").click(() => {
 
 $("#play_button").click(() => {
   console.log(recording);
-  let sequence = {
-    notes: recording,
-    quantizationInfo: { stepsPerQuarter: 4 },
-    tempos: [{ time: 0, qpm: 120 }],
-    totalQuantizedSteps: recording.length
-  };
+  let sequence = setSequence();
   console.log(sequence);
   mm.Player.tone.context.resume();
   player.start(sequence);
@@ -235,12 +238,7 @@ $("#play-magenta").click(() => {
       }
     }
 
-    let sequence = {
-      notes: recording,
-      quantizationInfo: { stepsPerQuarter: 4 },
-      tempos: [{ time: 0, qpm: 120 }],
-      totalQuantizedSteps: recording.length
-    };
+    let sequence = setSequence();
 
     console.log("sequence:");
     console.log(sequence);
@@ -253,6 +251,34 @@ $("#play-magenta").click(() => {
   }
 });
 
+// Converts the recorded sequence to a midi file.
+$("#download-button").click(() => {
+  if (recording.length == 0) {
+    alert("Please finish recording before downloading.");
+  } else {
+    let sequence = setSequence();
+    const midi = mm.sequenceProtoToMidi(sequence);
+    const file = new Blob([midi], { type: 'audio/midi' });
+
+    // Simple save with msSaveOrOpenBlob application and otherwise
+    // creates an element for downloading the sequence.
+    if (window.navigator.msSaveOrOpenBlob) {
+      window.navigator.msSaveOrOpenBlob(file, 'enabling_music_player.mid');
+    } else {
+      const a = document.createElement('a');
+      const url = URL.createObjectURL(file);
+      a.href = url;
+      a.download = 'enabling_music_player.mid';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }, 0);
+    }
+  }
+});
+
 var startRecording = () => {
   recording = [];
   is_recording = true;
@@ -262,3 +288,12 @@ var startRecording = () => {
 var stopRecording = () => {
   is_recording = false;
 };
+
+function setSequence() {
+  return {
+    notes: recording,
+    quantizationInfo: { stepsPerQuarter: 4 },
+    tempos: [{ time: 0, qpm: 120 }],
+    totalQuantizedSteps: recording.length
+  };
+}
