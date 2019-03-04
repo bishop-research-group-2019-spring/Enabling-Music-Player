@@ -1,4 +1,6 @@
-var pitches = [];
+//TODO: Playback is very slow atm. Need to fix this and then expand to having magenta continue the melody!
+//Magenta did playback successfully but not related to what the input was at all
+var pitches = []; //used to hold the 4 pitches currently being played
 var valid_pitches = [
   36,
   46,
@@ -21,12 +23,24 @@ var recording = [];
 var is_recording = false;
 var is_drum = true;
 note_count = 0;
+//mapping to of instruments to program vals
 var instruments = {
   drums: 0,
   guitar: 26,
   bass: 32,
   piano: 0
 };
+//upper and lower bounds on valid pitches for instruments - either drums or other
+var pitch_ranges = {
+  drums: {
+    upper: 81,
+    lower: 35
+  },
+  non_drums: {
+    upper: 108,
+    lower: 21
+  }
+}
 var instrument = instruments.drums;
 
 $(document).ready(function() {
@@ -85,7 +99,7 @@ $(document).keydown(e => {
       console.log("played pitch " + pitches[3]);
       break;
 
-    case 32:
+    case 32: //space
       shufflePitches();
       break;
 
@@ -139,14 +153,28 @@ function tabInstrument() {
 
 //get 4 new pitches with values between 1 and 100
 var shufflePitches = () => {
+  if(is_drum){
   pitches[0] =
-    valid_pitches[Math.floor((Math.random() * 100) % valid_pitches.length)];
+    Math.floor(pitch_ranges.drums.lower + ((Math.random() * 100) % (pitch_ranges.drums.upper - pitch_ranges.drums.lower)));
   pitches[1] =
-    valid_pitches[Math.floor((Math.random() * 100) % valid_pitches.length)];
+    Math.floor(pitch_ranges.drums.lower + ((Math.random() * 100) % (pitch_ranges.drums.upper - pitch_ranges.drums.lower)));
   pitches[2] =
-    valid_pitches[Math.floor((Math.random() * 100) % valid_pitches.length)];
+    Math.floor(pitch_ranges.drums.lower + ((Math.random() * 100) % (pitch_ranges.drums.upper - pitch_ranges.drums.lower)));
   pitches[3] =
-    valid_pitches[Math.floor((Math.random() * 100) % valid_pitches.length)];
+    Math.floor(pitch_ranges.drums.lower + ((Math.random() * 100) % (pitch_ranges.drums.upper - pitch_ranges.drums.lower)));
+    //valid_pitches[Math.floor((Math.random() * 100) % valid_pitches.length)];
+  } else {
+    pitches[0] =
+      Math.floor(pitch_ranges.non_drums.lower + ((Math.random() * 100) % (pitch_ranges.non_drums.upper - pitch_ranges.non_drums.lower)));
+    pitches[1] = 
+      Math.floor(pitch_ranges.non_drums.lower + ((Math.random() * 100) % (pitch_ranges.non_drums.upper - pitch_ranges.non_drums.lower)));
+    pitches[2] =
+      Math.floor(pitch_ranges.non_drums.lower + ((Math.random() * 100) % (pitch_ranges.non_drums.upper - pitch_ranges.non_drums.lower)));
+    pitches[3] =
+      Math.floor(pitch_ranges.non_drums.lower + ((Math.random() * 100) % (pitch_ranges.non_drums.upper - pitch_ranges.non_drums.lower)));
+  }
+
+
   if (pitchesDontMatch()) {
     return;
   } else {
@@ -167,8 +195,8 @@ var playNote = index => {
   if (is_recording) {
     let note_in_context = {
       pitch: pitches[index],
-      quantizedStartStep: note_count,
-      quantizedEndStep: note_count + 2,
+      startTime: note_count,
+      endTime: note_count + 2,
       isDrum: is_drum
     };
     recording.push(note_in_context);
@@ -217,7 +245,14 @@ $("#record-button").click(() => {
 $("#play_button").click(() => {
   console.log(recording);
   let sequence = setSequence();
+
+  console.log("sequence before quantization function");
   console.log(sequence);
+  console.log("sequence after quantization function");
+
+  sequence = mm.sequences.quantizeNoteSequence(sequence, 4);
+  console.log(sequence)
+
   mm.Player.tone.context.resume();
   player.start(sequence);
 });
