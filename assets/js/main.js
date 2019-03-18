@@ -1,23 +1,24 @@
 //TODO: Playback is very slow atm. Need to fix this and then expand to having magenta continue the melody!
 //Magenta did playback successfully but not related to what the input was at all
+//Middle C is the pitch 60 -- full mapping of pitch values to notes can be found here: http://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
+//library of magenta models w/ associated urls (which are given as argument to mm function) found here: http://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
 var pitches = []; //used to hold the 4 pitches currently being played
-var valid_pitches = [
-  36,
-  46,
-  56,
-  76,
-  79,
-  84,
-  68,
-  78,
-  86,
-  51,
-  67,
-  54,
-  72,
-  57,
-  60,
-  84
+var key_of_c_pitches = [ //16 notes across one octave up and down from middle c
+  48, //C
+  50, //D
+  52, //E
+  53, //F
+  55, //G
+  57, //A
+  59, //B
+  60, //middle C
+  62, //D
+  64, //E
+  65, //F
+  67, //G
+  69, //A
+  71, //B
+  72, //C
 ];
 var recording = [];
 var is_recording = false;
@@ -57,7 +58,7 @@ $(document).ready(function() {
   );
   console.log("player obj before caling playNote:");
   console.log(player);
-  pitches = [36, 46, 56, 76];
+  pitches = [59, 60, 62, 64];
 });
 
 //button listeners
@@ -154,24 +155,14 @@ function tabInstrument() {
 //get 4 new pitches with values between 1 and 100
 var shufflePitches = () => {
   if(is_drum){
-  pitches[0] =
-    Math.floor(pitch_ranges.drums.lower + ((Math.random() * 100) % (pitch_ranges.drums.upper - pitch_ranges.drums.lower)));
-  pitches[1] =
-    Math.floor(pitch_ranges.drums.lower + ((Math.random() * 100) % (pitch_ranges.drums.upper - pitch_ranges.drums.lower)));
-  pitches[2] =
-    Math.floor(pitch_ranges.drums.lower + ((Math.random() * 100) % (pitch_ranges.drums.upper - pitch_ranges.drums.lower)));
-  pitches[3] =
-    Math.floor(pitch_ranges.drums.lower + ((Math.random() * 100) % (pitch_ranges.drums.upper - pitch_ranges.drums.lower)));
-    //valid_pitches[Math.floor((Math.random() * 100) % valid_pitches.length)];
+    for(let i=0; i<pitches.length; i++){
+      pitches[i] = Math.floor(pitch_ranges.drums.lower + ((Math.random() * 100) % (pitch_ranges.drums.upper - pitch_ranges.drums.lower)));
+    }
   } else {
-    pitches[0] =
-      Math.floor(pitch_ranges.non_drums.lower + ((Math.random() * 100) % (pitch_ranges.non_drums.upper - pitch_ranges.non_drums.lower)));
-    pitches[1] = 
-      Math.floor(pitch_ranges.non_drums.lower + ((Math.random() * 100) % (pitch_ranges.non_drums.upper - pitch_ranges.non_drums.lower)));
-    pitches[2] =
-      Math.floor(pitch_ranges.non_drums.lower + ((Math.random() * 100) % (pitch_ranges.non_drums.upper - pitch_ranges.non_drums.lower)));
-    pitches[3] =
-      Math.floor(pitch_ranges.non_drums.lower + ((Math.random() * 100) % (pitch_ranges.non_drums.upper - pitch_ranges.non_drums.lower)));
+    for(let i=0; i<pitches.length; i++){
+      let index = Math.floor((Math.random() * 100) % key_of_c_pitches.length);
+      pitches[i] = key_of_c_pitches[index];
+    }
   }
 
 
@@ -187,7 +178,7 @@ var playNote = index => {
   let note = {
     pitch: pitches[index],
     startTime: 0,
-    endTime: 0.5,
+    endTime: 2.0,
     program: instrument,
     isDrum: is_drum
   };
@@ -196,23 +187,25 @@ var playNote = index => {
     let note_in_context = {
       pitch: pitches[index],
       startTime: note_count,
-      endTime: note_count + 2,
+      endTime: note_count + 1,
       isDrum: is_drum
     };
     recording.push(note_in_context);
-    note_count = note_count + 3;
+    note_count = note_count + 1;
   }
-  console.log({
+
+  /*console.log({
     notes: [note],
     quantizationInfo: { stepsPerQuarter: 4 },
     tempos: [{ time: 0, qpm: 120 }],
     totalQuantizedSteps: 1
-  });
+  });*/
+
   player.start({
     notes: [note],
     quantizationInfo: { stepsPerQuarter: 4 },
     tempos: [{ time: 0, qpm: 120 }],
-    totalQuantizedSteps: 1
+    totalQuantizedSteps: 2
   });
 };
 
@@ -237,10 +230,16 @@ $("#record-button").click(() => {
     startRecording();
   } else {
     $("#record-button").css("background-color", "rgb(247,247,247)");
-    $("#record-button").css("color", "#007bff");
+    $("#record-button").css("color", "red");
     stopRecording();
   }
 });
+
+$("#stop-button").click(() => {
+  console.log("inside of stop_button.click");
+  player.stop();
+  console.log("after call of player.stop()");
+})
 
 $("#play_button").click(() => {
   console.log(recording);
