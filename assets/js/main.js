@@ -108,7 +108,6 @@ $(document).keydown(e => {
         playNote(2);
         console.log("played pitch " + pitches[2]);
       }
-     
       break;
 
     case 67: //C
@@ -128,10 +127,6 @@ $(document).keydown(e => {
       break;
   }
 });
-
-$(document).keyup(function() {
-  key_down = false;
-})
 
 // Change the instrument for clicking tabs
 $('#list-tab a[href="#drums"').click(() => {
@@ -197,13 +192,12 @@ var shufflePitches = () => {
 };
 
 var playNote = index => {
-  key_down = true;
 
   mm.Player.tone.context.resume();
   let note = {
     pitch: pitches[index],
     startTime: 0,
-    endTime: 2.0,
+    endTime: 0.3,
     program: instrument,
     isDrum: is_drum
   };
@@ -226,6 +220,8 @@ var playNote = index => {
     tempos: [{ time: 0, qpm: 120 }],
     totalQuantizedSteps: 2
   });
+
+  setTimeout(function(){key_down = false;}, 300);
 };
 
 var pitchesDontMatch = () => {
