@@ -278,31 +278,36 @@ $("#play-magenta").click(() => {
     console.log("sequence:");
     console.log(sequence);
 
-    const qns = mm.sequences.quantizeNoteSequence(sequence, 4);
+    let qns = mm.sequences.quantizeNoteSequence(sequence, 4);
+    let total_quantized_steps = 0;
+    //get the correct number of quantized steps by finding the ending of the last note in qns.notes
+    for(let i=0; i<qns.notes.length; i++){
+      if(total_quantized_steps < qns.notes[i].quantizedEndStep){
+        total_quantized_steps = qns.notes[i].quantizedEndStep;
+      }
+    }
+    console.log("value of total_quantized_steps:");
+    console.log(total_quantized_steps);
+    qns.totalQuantizedSteps = total_quantized_steps;
+    console.log("qns:");
+    console.log(qns);
+
 
     music_rnn
-      .continueSequence(sequence, 20, 1.5)
-      .then((sample) => {
-        console.log("sample:");
-        console.log(sample);
+      .continueSequence(qns, 20, 1.5)
+      .then(async (sample) => {
 
         //get all notes from sample with the expected instrument into ml_sequence
         let ml_sequence = sample.notes;
         for(let i=0; i<ml_sequence.length; i++){
           ml_sequence[i].program = instrument;
         }
-
-        console.log("ml_sequence:");
-        console.log(ml_sequence);
-
-        //join ml_sequence to the already recorded notes
-        console.log("recording:");
-        console.log(recording);
         
         //will return a new note array with the notes in recording followed by the notes in ml_sequence with the correct timing
-        let joined_note_sequence = join_sequences([recording, ml_sequence]);
+        let joined_note_sequence = join_sequences([qns.notes, ml_sequence]);
         console.log("joined_note_sequence:");
         console.log(joined_note_sequence);
+
 
         //successfully plays the recorded notes followed by the model genarated notes but has the wrong timing for the recorded notes
         player.start({
@@ -312,6 +317,7 @@ $("#play-magenta").click(() => {
           totalQuantizedSteps:joined_note_sequence.length
         })
       });
+
   }
 });
 
@@ -374,18 +380,13 @@ var join_sequences = (note_sequences) => {
     for(let j=0; j<sequences[i].length; j++){
 
       //update start and end time for this note to reflect offset
-      if(sequences[i][j].startTime != sequences[i][j].endTime){
-        sequences[i][j].quantizedStartStep = sequences[i][j].startTime + offset;
-        sequences[i][j].quantizedEndStep = sequences[i][j].endTime + offset;
-      } else {
-        sequences[i][j].quantizedStartStep = sequences[i][j].quantizedStartStep + offset;
-        sequences[i][j].quantizedEndStep = sequences[i][j].quantizedEndStep + offset;
-      }
-      
+      sequences[i][j].quantizedStartStep = sequences[i][j].quantizedStartStep + offset;
+      sequences[i][j].quantizedEndStep = sequences[i][j].quantizedEndStep + offset;
+
 
       //update max if this endtime is the greatest seen so far
-      if(sequences[i][j].endTime > max){
-        max = sequences[i][j].endTime;
+      if(sequences[i][j].quantizedEndStep > max){
+        max = sequences[i][j].quantizedEndStep;
       }
 
       joined_sequence.push(sequences[i][j]);
