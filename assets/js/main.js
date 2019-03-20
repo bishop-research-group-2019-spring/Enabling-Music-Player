@@ -78,6 +78,10 @@ $("#bottom-left-button").click(() => {
   playNote(3);
 });
 
+$("#bottom-button").click(() => {
+  shufflePitches();
+})
+
 $(document).keydown(e => {
   switch (e.which) {
     case 83: //S
