@@ -188,6 +188,7 @@ var playNote = index => {
       pitch: pitches[index],
       startTime: note_count,
       endTime: note_count + 1,
+      program: instrument,
       isDrum: is_drum
     };
     recording.push(note_in_context);
@@ -281,7 +282,36 @@ $("#play-magenta").click(() => {
 
     music_rnn
       .continueSequence(sequence, 20, 1.5)
-      .then(sample => rnnPlayer.start(sample));
+      .then((sample) => {
+        console.log("sample:");
+        console.log(sample);
+
+        //get all notes from sample with the expected instrument into ml_sequence
+        let ml_sequence = sample.notes;
+        for(let i=0; i<ml_sequence.length; i++){
+          ml_sequence[i].program = instrument;
+        }
+
+        console.log("ml_sequence:");
+        console.log(ml_sequence);
+
+        //join ml_sequence to the already recorded notes
+        console.log("recording:");
+        console.log(recording);
+        
+        //will return a new note array with the notes in recording followed by the notes in ml_sequence with the correct timing
+        let joined_note_sequence = join_sequences([recording, ml_sequence]);
+        console.log("joined_note_sequence:");
+        console.log(joined_note_sequence);
+
+        //successfully plays the recorded notes followed by the model genarated notes but has the wrong timing for the recorded notes
+        player.start({
+          notes: joined_note_sequence.sequence,
+          quantizationInfo: {stepsPerQuarter: 4},
+          teompo: [{time: 0, qpm: 120}],
+          totalQuantizedSteps:joined_note_sequence.length
+        })
+      });
   }
 });
 
@@ -330,4 +360,39 @@ function setSequence() {
     tempos: [{ time: 0, qpm: 120 }],
     totalQuantizedSteps: recording.length
   };
+}
+
+var join_sequences = (note_sequences) => {
+  console.log("note_sequences from within join_sequences:");
+  console.log(note_sequences);
+  let sequences = note_sequences;
+  let joined_sequence = [];
+  let offset = 0;
+  for(let i=0; i<sequences.length; i++){
+    //find the last notes end time for the current sequence and set that to be the starting note of the next sequence
+    let max = 0;
+    for(let j=0; j<sequences[i].length; j++){
+
+      //update start and end time for this note to reflect offset
+      if(sequences[i][j].startTime != sequences[i][j].endTime){
+        sequences[i][j].quantizedStartStep = sequences[i][j].startTime + offset;
+        sequences[i][j].quantizedEndStep = sequences[i][j].endTime + offset;
+      } else {
+        sequences[i][j].quantizedStartStep = sequences[i][j].quantizedStartStep + offset;
+        sequences[i][j].quantizedEndStep = sequences[i][j].quantizedEndStep + offset;
+      }
+      
+
+      //update max if this endtime is the greatest seen so far
+      if(sequences[i][j].endTime > max){
+        max = sequences[i][j].endTime;
+      }
+
+      joined_sequence.push(sequences[i][j]);
+    }
+
+    offset = max;
+  }
+
+  return {"sequence":joined_sequence, "length":offset};
 }
