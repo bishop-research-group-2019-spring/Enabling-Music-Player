@@ -213,11 +213,16 @@ var playNote = index => {
       pitch: pitches[index],
       startTime: note_count,
       endTime: note_count + 0.25,
+      // TODO: downloading the melody only works with
+      // quantizedStartStep and quantizedEndStep defined.
+      // quantizedStartStep: note_count,
+      // quantizedEndStep: note_count + 2,
       program: instrument,
       isDrum: is_drum
     };
     recording.push(note_in_context);
     note_count = note_count + 0.25;
+    // note_count += 3;   <- what we had earlier
   }
 
   player.start({
@@ -378,6 +383,7 @@ function setSequence() {
     notes: recording,
     quantizationInfo: { stepsPerQuarter: 4 },
     tempos: [{ time: 0, qpm: 120 }],
+    totalQuantizedSteps: recording.length
   };
 }
 
