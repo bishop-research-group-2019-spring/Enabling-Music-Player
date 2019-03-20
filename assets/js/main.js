@@ -1,4 +1,3 @@
-//TODO: Playback is very slow atm. Need to fix this and then expand to having magenta continue the melody!
 //Magenta did playback successfully but not related to what the input was at all
 //Middle C is the pitch 60 -- full mapping of pitch values to notes can be found here: http://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
 //library of magenta models w/ associated urls (which are given as argument to mm function) found here: http://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
@@ -24,6 +23,7 @@ var recording = [];
 var is_recording = false;
 var is_drum = true;
 note_count = 0;
+var key_down = false;
 //mapping to of instruments to program vals
 var instruments = {
   drums: 0,
@@ -82,26 +82,41 @@ $("#bottom-button").click(() => {
   shufflePitches();
 })
 
+
+
 $(document).keydown(e => {
   switch (e.which) {
     case 83: //S
-      playNote(0);
-      console.log("played pitch " + pitches[0]);
+      if(!key_down){
+        key_down = true;
+        playNote(0);
+        console.log("played pitch " + pitches[0]);
+      }
       break;
 
     case 68: //D
-      playNote(1);
-      console.log("played pitch " + pitches[1]);
+      if(!key_down){
+        key_down = true;
+        playNote(1);
+        console.log("played pitch " + pitches[1]);
+      }
       break;
 
     case 88: //X
-      playNote(2);
-      console.log("played pitch " + pitches[2]);
+      if(!key_down){
+        key_down = true;
+        playNote(2);
+        console.log("played pitch " + pitches[2]);
+      }
+     
       break;
 
     case 67: //C
-      playNote(3);
-      console.log("played pitch " + pitches[3]);
+      if(!key_down){
+        key_down = true;
+        playNote(3);
+        console.log("played pitch " + pitches[3]);
+      }
       break;
 
     case 32: //space
@@ -113,6 +128,10 @@ $(document).keydown(e => {
       break;
   }
 });
+
+$(document).keyup(function() {
+  key_down = false;
+})
 
 // Change the instrument for clicking tabs
 $('#list-tab a[href="#drums"').click(() => {
@@ -178,6 +197,8 @@ var shufflePitches = () => {
 };
 
 var playNote = index => {
+  key_down = true;
+
   mm.Player.tone.context.resume();
   let note = {
     pitch: pitches[index],
@@ -191,20 +212,13 @@ var playNote = index => {
     let note_in_context = {
       pitch: pitches[index],
       startTime: note_count,
-      endTime: note_count + 1,
+      endTime: note_count + 0.25,
       program: instrument,
       isDrum: is_drum
     };
     recording.push(note_in_context);
-    note_count = note_count + 1;
+    note_count = note_count + 0.25;
   }
-
-  /*console.log({
-    notes: [note],
-    quantizationInfo: { stepsPerQuarter: 4 },
-    tempos: [{ time: 0, qpm: 120 }],
-    totalQuantizedSteps: 1
-  });*/
 
   player.start({
     notes: [note],
@@ -290,12 +304,8 @@ $("#play-magenta").click(() => {
         total_quantized_steps = qns.notes[i].quantizedEndStep;
       }
     }
-    console.log("value of total_quantized_steps:");
-    console.log(total_quantized_steps);
-    qns.totalQuantizedSteps = total_quantized_steps;
-    console.log("qns:");
-    console.log(qns);
 
+    qns.totalQuantizedSteps = total_quantized_steps;
 
     music_rnn
       .continueSequence(qns, 20, 1.5)
@@ -368,7 +378,6 @@ function setSequence() {
     notes: recording,
     quantizationInfo: { stepsPerQuarter: 4 },
     tempos: [{ time: 0, qpm: 120 }],
-    totalQuantizedSteps: recording.length
   };
 }
 
