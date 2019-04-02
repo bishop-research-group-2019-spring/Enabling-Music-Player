@@ -337,6 +337,7 @@ $("#download-button").click(() => {
     alert("Please finish recording before downloading.");
   } else {
     let sequence = setSequence();
+    
     const midi = mm.sequenceProtoToMidi(sequence);
     const file = new Blob([midi], { type: 'audio/midi' });
 
