@@ -207,6 +207,8 @@ var playNote = index => {
       pitch: pitches[index],
       startTime: note_count,
       endTime: note_count + 0.25,
+      // quantizedStartStep: note_count,
+      // quantizedEndStep: note_count + 2,
       program: instrument,
       isDrum: is_drum
     };
@@ -337,12 +339,32 @@ $("#download-button").click(() => {
     alert("Please finish recording before downloading.");
   } else {
     let sequence = setSequence();
-    
+
+    let qns = mm.sequences.quantizeNoteSequence(sequence, 4);
+    let total_quantized_steps = 0;
+    console.log("total_quantized_steps:" + total_quantized_steps);
+    //get the correct number of quantized steps by finding the ending of the last note in qns.notes
+    for(let i=0; i<qns.notes.length; i++){
+      if(total_quantized_steps < qns.notes[i].quantizedEndStep){
+        total_quantized_steps = qns.notes[i].quantizedEndStep;
+      }
+    }
+
+    console.log("qns:");
+    console.log(qns);
+    /*
+    {
+      notes: joined_note_sequence.sequence,
+      quantizationInfo: {stepsPerQuarter: 4},
+      teompo: [{time: 0, qpm: 120}],
+      totalQuantizedSteps:joined_note_sequence.length
+    }
+    */
     const midi = mm.sequenceProtoToMidi(sequence);
     const file = new Blob([midi], { type: 'audio/midi' });
 
-    // Simple save with msSaveOrOpenBlob application and otherwise
-    // creates an element for downloading the sequence.
+    // Saves with msSaveOrOpenBlob application and otherwise
+    // creates a temporary element for downloading the sequence.
     if (window.navigator.msSaveOrOpenBlob) {
       window.navigator.msSaveOrOpenBlob(file, 'enabling_music_player.mid');
     } else {
@@ -375,6 +397,7 @@ function setSequence() {
     notes: recording,
     quantizationInfo: { stepsPerQuarter: 4 },
     tempos: [{ time: 0, qpm: 120 }],
+    totalQuantizedSteps: recording.length
   };
 }
 
