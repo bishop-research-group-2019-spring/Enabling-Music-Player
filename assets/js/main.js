@@ -18,6 +18,13 @@ var key_of_c_pitches = [ //16 notes across one octave up and down from middle c
   69, //A
   71, //B
   72, //C
+  74, //D
+  76, //E
+  77, //F
+  79, //G
+  81, //A
+  83, //B
+  84, //C
 ];
 var recording = [];
 var is_recording = false;
@@ -344,9 +351,9 @@ $("#download-button").click(() => {
     let total_quantized_steps = 0;
     console.log("total_quantized_steps:" + total_quantized_steps);
     //get the correct number of quantized steps by finding the ending of the last note in qns.notes
-    for(let i=0; i<qns.notes.length; i++){
-      if(total_quantized_steps < qns.notes[i].quantizedEndStep){
-        total_quantized_steps = qns.notes[i].quantizedEndStep;
+    for(let i=0; i<sequence.notes.length; i++){
+      if(total_quantized_steps < sequence.notes[i].quantizedEndStep){
+        total_quantized_steps = sequence.notes[i].quantizedEndStep;
       }
     }
 
@@ -397,7 +404,9 @@ function setSequence() {
     notes: recording,
     quantizationInfo: { stepsPerQuarter: 4 },
     tempos: [{ time: 0, qpm: 120 }],
-    totalQuantizedSteps: recording.length
+    totalQuantizedSteps: recording.length,
+    program: instrument,
+    isDrum: is_drum
   };
 }
 
