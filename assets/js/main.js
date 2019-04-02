@@ -213,8 +213,6 @@ var playNote = index => {
       pitch: pitches[index],
       startTime: note_count,
       endTime: note_count + 0.25,
-      // TODO: downloading the melody only works with
-      // quantizedStartStep and quantizedEndStep defined.
       // quantizedStartStep: note_count,
       // quantizedEndStep: note_count + 2,
       program: instrument,
@@ -222,7 +220,6 @@ var playNote = index => {
     };
     recording.push(note_in_context);
     note_count = note_count + 0.25;
-    // note_count += 3;   <- what we had earlier
   }
 
   player.start({
@@ -346,11 +343,23 @@ $("#download-button").click(() => {
     alert("Please finish recording before downloading.");
   } else {
     let sequence = setSequence();
-    const midi = mm.sequenceProtoToMidi(sequence);
+    let qns = mm.sequences.quantizeNoteSequence(sequence, 4);
+    let total_quantized_steps = 0;
+    //get the correct number of quantized steps by finding the ending of the last note in qns.notes
+    for(let i=0; i<qns.notes.length; i++){
+      if(total_quantized_steps < qns.notes[i].quantizedEndStep){
+        total_quantized_steps = qns.notes[i].quantizedEndStep;
+      }
+    }
+
+    qns.totalQuantizedSteps = total_quantized_steps;
+    console.log("download: ");
+    console.log(qns);
+    const midi = mm.sequenceProtoToMidi(qns);
     const file = new Blob([midi], { type: 'audio/midi' });
 
-    // Simple save with msSaveOrOpenBlob application and otherwise
-    // creates an element for downloading the sequence.
+    // Saves with msSaveOrOpenBlob application and otherwise
+    // creates a temporary element for downloading the sequence.
     if (window.navigator.msSaveOrOpenBlob) {
       window.navigator.msSaveOrOpenBlob(file, 'enabling_music_player.mid');
     } else {
