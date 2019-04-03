@@ -18,6 +18,13 @@ var key_of_c_pitches = [ //16 notes across one octave up and down from middle c
   69, //A
   71, //B
   72, //C
+  74, //D
+  76, //E
+  77, //F
+  79, //G
+  81, //A
+  83, //B
+  84, //C
 ];
 var recording = [];
 var is_recording = false;
@@ -79,8 +86,6 @@ $("#bottom-button").click(() => {
   shufflePitches();
 })
 
-
-
 $(document).keydown(e => {
   switch (e.which) {
     case 83: //S
@@ -100,16 +105,21 @@ $(document).keydown(e => {
       break;
 
     case 88: //X
-      if (!key_down && !two_button_mode) {
+      if (two_button_mode) {
+        break;
+      }
+      if (!key_down) {
         key_down = true;
         playNote(2);
         console.log("played pitch " + pitches[2]);
       }
-
       break;
 
     case 67: //C
-      if (!key_down && !two_button_mode) {
+      if (two_button_mode) {
+        break;
+      }
+      if (!key_down) {
         key_down = true;
         playNote(3);
         console.log("played pitch " + pitches[3]);
@@ -125,10 +135,6 @@ $(document).keydown(e => {
       break;
   }
 });
-
-$(document).keyup(function () {
-  key_down = false;
-})
 
 // Change the instrument for clicking tabs
 $('#list-tab a[href="#drums"').click(() => {
@@ -194,13 +200,12 @@ var shufflePitches = () => {
 };
 
 var playNote = index => {
-  key_down = true;
 
   mm.Player.tone.context.resume();
   let note = {
     pitch: pitches[index],
     startTime: 0,
-    endTime: 2.0,
+    endTime: 0.3,
     program: instrument,
     isDrum: is_drum
   };
@@ -230,6 +235,8 @@ var playNote = index => {
     }],
     totalQuantizedSteps: 2
   });
+
+  setTimeout(function(){key_down = false;}, 330);
 };
 
 var pitchesDontMatch = () => {
@@ -364,8 +371,10 @@ $("#download-button").click(() => {
     alert("Please finish recording before downloading.");
   } else {
     let sequence = setSequence();
-    sequence = mm.sequences.quantizeNoteSequence(sequence, 4);
+
+    let qns = mm.sequences.quantizeNoteSequence(sequence, 4);
     let total_quantized_steps = 0;
+    console.log("total_quantized_steps:" + total_quantized_steps);
     //get the correct number of quantized steps by finding the ending of the last note in qns.notes
     for (let i = 0; i < sequence.notes.length; i++) {
       if (total_quantized_steps < sequence.notes[i].quantizedEndStep) {
@@ -373,11 +382,16 @@ $("#download-button").click(() => {
       }
     }
 
-    sequence.totalQuantizedSteps = total_quantized_steps;
-    mm.Player.tone.context.resume();
-
-    console.log("download: ");
-    console.log(sequence);
+    console.log("qns:");
+    console.log(qns);
+    /*
+    {
+      notes: joined_note_sequence.sequence,
+      quantizationInfo: {stepsPerQuarter: 4},
+      teompo: [{time: 0, qpm: 120}],
+      totalQuantizedSteps:joined_note_sequence.length
+    }
+    */
     const midi = mm.sequenceProtoToMidi(sequence);
     const file = new Blob([midi], {
       type: 'audio/midi'
