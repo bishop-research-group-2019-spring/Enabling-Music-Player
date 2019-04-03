@@ -24,6 +24,7 @@ var is_recording = false;
 var is_drum = true;
 note_count = 0;
 var key_down = false;
+var two_button_mode = false;
 //mapping to of instruments to program vals
 var instruments = {
   drums: 0,
@@ -44,15 +45,7 @@ var pitch_ranges = {
 }
 var instrument = instruments.drums;
 
-$(document).ready(function() {
-  // Enables overflow-y attribute for mobile devices.
-  if (
-    typeof window.orientation !== "undefined" ||
-    navigator.userAgent.indexOf("IEMobile") !== -1
-  ) {
-    $(document.body).css("overflow-y", "auto");
-  }
-
+$(document).ready(function () {
   player = new mm.SoundFontPlayer(
     "https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus"
   );
@@ -67,11 +60,15 @@ $("#top-left-button").click(() => {
 });
 
 $("#top-right-button").click(() => {
-  playNote(1);
+  if (!two_button_mode) {
+    playNote(1);
+  }
 });
 
 $("#bottom-right-button").click(() => {
-  playNote(2);
+  if (!two_button_mode) {
+    playNote(2);
+  }
 });
 
 $("#bottom-left-button").click(() => {
@@ -87,7 +84,7 @@ $("#bottom-button").click(() => {
 $(document).keydown(e => {
   switch (e.which) {
     case 83: //S
-      if(!key_down){
+      if (!key_down) {
         key_down = true;
         playNote(0);
         console.log("played pitch " + pitches[0]);
@@ -95,7 +92,7 @@ $(document).keydown(e => {
       break;
 
     case 68: //D
-      if(!key_down){
+      if (!key_down) {
         key_down = true;
         playNote(1);
         console.log("played pitch " + pitches[1]);
@@ -103,16 +100,16 @@ $(document).keydown(e => {
       break;
 
     case 88: //X
-      if(!key_down){
+      if (!key_down && !two_button_mode) {
         key_down = true;
         playNote(2);
         console.log("played pitch " + pitches[2]);
       }
-     
+
       break;
 
     case 67: //C
-      if(!key_down){
+      if (!key_down && !two_button_mode) {
         key_down = true;
         playNote(3);
         console.log("played pitch " + pitches[3]);
@@ -129,7 +126,7 @@ $(document).keydown(e => {
   }
 });
 
-$(document).keyup(function() {
+$(document).keyup(function () {
   key_down = false;
 })
 
@@ -177,12 +174,12 @@ function tabInstrument() {
 
 //get 4 new pitches with values between 1 and 100
 var shufflePitches = () => {
-  if(is_drum){
-    for(let i=0; i<pitches.length; i++){
+  if (is_drum) {
+    for (let i = 0; i < pitches.length; i++) {
       pitches[i] = Math.floor(pitch_ranges.drums.lower + ((Math.random() * 100) % (pitch_ranges.drums.upper - pitch_ranges.drums.lower)));
     }
   } else {
-    for(let i=0; i<pitches.length; i++){
+    for (let i = 0; i < pitches.length; i++) {
       let index = Math.floor((Math.random() * 100) % key_of_c_pitches.length);
       pitches[i] = key_of_c_pitches[index];
     }
@@ -224,8 +221,13 @@ var playNote = index => {
 
   player.start({
     notes: [note],
-    quantizationInfo: { stepsPerQuarter: 4 },
-    tempos: [{ time: 0, qpm: 120 }],
+    quantizationInfo: {
+      stepsPerQuarter: 4
+    },
+    tempos: [{
+      time: 0,
+      qpm: 120
+    }],
     totalQuantizedSteps: 2
   });
 };
@@ -253,6 +255,20 @@ $("#record-button").click(() => {
     $("#record-button").css("background-color", "rgb(247,247,247)");
     $("#record-button").css("color", "red");
     stopRecording();
+  }
+});
+
+$("#switch-button").click(() => {
+  if (!two_button_mode) {
+    $("#big-button-holder").css("display", "none");
+    $("#two-button-holder").css("display", "block");
+    $('#switch-button').val('Original Mode');
+    two_button_mode = true;
+  } else {
+    $("#two-button-holder").css("display", "none");
+    $("#big-button-holder").css("display", "block");
+    $('#switch-button').val('2 Button Mode');
+    two_button_mode = false;
   }
 });
 
@@ -301,8 +317,8 @@ $("#play-magenta").click(() => {
     let qns = mm.sequences.quantizeNoteSequence(sequence, 4);
     let total_quantized_steps = 0;
     //get the correct number of quantized steps by finding the ending of the last note in qns.notes
-    for(let i=0; i<qns.notes.length; i++){
-      if(total_quantized_steps < qns.notes[i].quantizedEndStep){
+    for (let i = 0; i < qns.notes.length; i++) {
+      if (total_quantized_steps < qns.notes[i].quantizedEndStep) {
         total_quantized_steps = qns.notes[i].quantizedEndStep;
       }
     }
@@ -315,10 +331,10 @@ $("#play-magenta").click(() => {
 
         //get all notes from sample with the expected instrument into ml_sequence
         let ml_sequence = sample.notes;
-        for(let i=0; i<ml_sequence.length; i++){
+        for (let i = 0; i < ml_sequence.length; i++) {
           ml_sequence[i].program = instrument;
         }
-        
+
         //will return a new note array with the notes in recording followed by the notes in ml_sequence with the correct timing
         let joined_note_sequence = join_sequences([qns.notes, ml_sequence]);
         console.log("joined_note_sequence:");
@@ -328,9 +344,14 @@ $("#play-magenta").click(() => {
         //successfully plays the recorded notes followed by the model genarated notes but has the wrong timing for the recorded notes
         player.start({
           notes: joined_note_sequence.sequence,
-          quantizationInfo: {stepsPerQuarter: 4},
-          teompo: [{time: 0, qpm: 120}],
-          totalQuantizedSteps:joined_note_sequence.length
+          quantizationInfo: {
+            stepsPerQuarter: 4
+          },
+          teompo: [{
+            time: 0,
+            qpm: 120
+          }],
+          totalQuantizedSteps: joined_note_sequence.length
         })
       });
 
@@ -346,8 +367,8 @@ $("#download-button").click(() => {
     sequence = mm.sequences.quantizeNoteSequence(sequence, 4);
     let total_quantized_steps = 0;
     //get the correct number of quantized steps by finding the ending of the last note in qns.notes
-    for(let i=0; i<sequence.notes.length; i++){
-      if(total_quantized_steps < sequence.notes[i].quantizedEndStep){
+    for (let i = 0; i < sequence.notes.length; i++) {
+      if (total_quantized_steps < sequence.notes[i].quantizedEndStep) {
         total_quantized_steps = sequence.notes[i].quantizedEndStep;
       }
     }
@@ -358,7 +379,9 @@ $("#download-button").click(() => {
     console.log("download: ");
     console.log(sequence);
     const midi = mm.sequenceProtoToMidi(sequence);
-    const file = new Blob([midi], { type: 'audio/midi' });
+    const file = new Blob([midi], {
+      type: 'audio/midi'
+    });
 
     // Saves with msSaveOrOpenBlob application and otherwise
     // creates a temporary element for downloading the sequence.
@@ -392,8 +415,13 @@ var stopRecording = () => {
 function setSequence() {
   return {
     notes: recording,
-    quantizationInfo: { stepsPerQuarter: 4 },
-    tempos: [{ time: 0, qpm: 120 }],
+    quantizationInfo: {
+      stepsPerQuarter: 4
+    },
+    tempos: [{
+      time: 0,
+      qpm: 120
+    }],
     totalQuantizedSteps: recording.length,
     program: instrument,
     isDrum: is_drum
@@ -406,10 +434,10 @@ var join_sequences = (note_sequences) => {
   let sequences = note_sequences;
   let joined_sequence = [];
   let offset = 0;
-  for(let i=0; i<sequences.length; i++){
+  for (let i = 0; i < sequences.length; i++) {
     //find the last notes end time for the current sequence and set that to be the starting note of the next sequence
     let max = 0;
-    for(let j=0; j<sequences[i].length; j++){
+    for (let j = 0; j < sequences[i].length; j++) {
 
       //update start and end time for this note to reflect offset
       sequences[i][j].quantizedStartStep = sequences[i][j].quantizedStartStep + offset;
@@ -417,7 +445,7 @@ var join_sequences = (note_sequences) => {
 
 
       //update max if this endtime is the greatest seen so far
-      if(sequences[i][j].quantizedEndStep > max){
+      if (sequences[i][j].quantizedEndStep > max) {
         max = sequences[i][j].quantizedEndStep;
       }
 
@@ -427,5 +455,8 @@ var join_sequences = (note_sequences) => {
     offset = max;
   }
 
-  return {"sequence":joined_sequence, "length":offset};
+  return {
+    "sequence": joined_sequence,
+    "length": offset
+  };
 }

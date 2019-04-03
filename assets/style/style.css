@@ -3,10 +3,10 @@ body {
   height: 100%;
   width: 100%;
   overflow-x: hidden;
-  overflow-y: hidden;
+  overflow-y: auto;
 }
 
-#title {
+#title, .tab-content {
   text-align: center;
 }
 
@@ -16,10 +16,6 @@ body {
   height: 15%;
   -webkit-flex-wrap: wrap;
   flex-wrap: wrap;
-  /* left: 50%; */
-  /* transform: translateX(-50%); */
-  /* bottom: 20px; */
-  /* height: 100px; */
   z-index: 2;
 }
 
@@ -33,18 +29,33 @@ body {
   width: 40%;
   margin: 2%;
   cursor: pointer;
-  /* width: 250px;
-  height: 150px;
-  margin-right:20px;
-  margin-left:20px;
-  margin-top:20px;
-  margin-bottom:20px; */
+  text-align: center;
+}
+
+#big-button-holder {
+  display: block;
+}
+
+#two-button-holder {
+  display: none;
+}
+
+.two-button {
+  position: relative;
+  flex: 50%;
+  margin: 2%;
+  cursor: pointer;
   text-align: center;
 }
 
 .button-row {
-  /* margin-left: 60px; */
   height: 50%;
+}
+
+.button-col {
+  height: 35vh;
+  width: 100%;
+  display: flex;
 }
 
 #top-left-button {
@@ -63,20 +74,38 @@ body {
   background-color: pink;
 }
 
+input {
+  font: 1em/1.5em Arial, Helvetica, sans-serif;
+  font-size: 20px !important;
+  font-weight: 550 !important;
+}
+
 .inline {
   display: inline-block;
 }
 
 .button-text {
-  /* padding-top: 40px; */
-  /* padding: 40px 0 30px 0; */
   padding: 4% 0 3% 0;
   color: white;
   font-size: 35px;
 }
 
-#bottom-button{
-  width:85%;
+.two-button-text {
+  color: white;
+  font-size: 45px;
+  width: 50%;
+  height: 40%;
+  overflow: auto;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+#bottom-button {
+  width: 85%;
   background-color: purple;
 }
 
@@ -85,16 +114,16 @@ body {
   margin-bottom: 2%;
 }
 
-.audio-control{
+.audio-control {
   width: 25px;
-  height:25px;
+  height: 25px;
   margin-top: 5px;
 }
 
-.audio-control:hover{
+.audio-control:hover {
   cursor: pointer;
 }
 
-.audio-control-holder{
-  display:inline-block;
+.audio-control-holder {
+  display: inline-block;
 }
