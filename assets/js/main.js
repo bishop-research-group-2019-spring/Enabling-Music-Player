@@ -214,14 +214,14 @@ var playNote = index => {
     let note_in_context = {
       pitch: pitches[index],
       startTime: note_count,
-      endTime: note_count + 0.25,
+      endTime: note_count + 0.5,
       // quantizedStartStep: note_count,
       // quantizedEndStep: note_count + 2,
       program: instrument,
       isDrum: is_drum
     };
     recording.push(note_in_context);
-    note_count = note_count + 0.25;
+    note_count = note_count + 0.5;
   }
 
   player.start({
@@ -372,7 +372,7 @@ $("#download-button").click(() => {
   } else {
     let sequence = setSequence();
 
-    let qns = mm.sequences.quantizeNoteSequence(sequence, 4);
+    sequence = mm.sequences.quantizeNoteSequence(sequence, 4);
     let total_quantized_steps = 0;
     console.log("total_quantized_steps:" + total_quantized_steps);
     //get the correct number of quantized steps by finding the ending of the last note in qns.notes
@@ -382,16 +382,9 @@ $("#download-button").click(() => {
       }
     }
 
-    console.log("qns:");
-    console.log(qns);
-    /*
-    {
-      notes: joined_note_sequence.sequence,
-      quantizationInfo: {stepsPerQuarter: 4},
-      teompo: [{time: 0, qpm: 120}],
-      totalQuantizedSteps:joined_note_sequence.length
-    }
-    */
+    sequence.totalQuantizedSteps = total_quantized_steps;
+    mm.Player.tone.context.resume();
+
     const midi = mm.sequenceProtoToMidi(sequence);
     const file = new Blob([midi], {
       type: 'audio/midi'
