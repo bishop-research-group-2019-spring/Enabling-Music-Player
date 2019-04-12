@@ -67,21 +67,27 @@ $("#top-left-button").click(() => {
 });
 
 $("#top-right-button").click(() => {
-  if (!two_button_mode) {
     playNote(1);
-  }
 });
 
 $("#bottom-right-button").click(() => {
-  if (!two_button_mode) {
     playNote(2);
-  }
 });
 
 $("#bottom-left-button").click(() => {
   playNote(3);
 });
 
+// Two Button Mode
+$("#left-button").click(() => {
+  playNote(0);
+});
+
+$("#right-button").click(() => {
+  playNote(1);
+});
+
+// TODO: Alternative to clicking space to shuffle pitches.
 $("#bottom-button").click(() => {
   shufflePitches();
 })
@@ -236,7 +242,9 @@ var playNote = index => {
     totalQuantizedSteps: 2
   });
 
-  setTimeout(function(){key_down = false;}, 330);
+  setTimeout(function () {
+    key_down = false;
+  }, 330);
 };
 
 var pitchesDontMatch = () => {

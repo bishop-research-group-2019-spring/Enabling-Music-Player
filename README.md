@@ -1,4 +1,4 @@
-# Enabling Music Player
+# Tar Heel Music
 Try the prototype [here](https://bishop-research-group-2019-spring.github.io/Enabling-Music-Player/).
 
 ## Description

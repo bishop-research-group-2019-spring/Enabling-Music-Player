@@ -26,10 +26,10 @@ body {
 
 .big-button {
   display: inline-block;
-  width: 40%;
-  margin: 2%;
+  width: 45%;
+  height: 125px;
+  margin: 1%;
   cursor: pointer;
-  text-align: center;
 }
 
 #big-button-holder {
@@ -50,19 +50,21 @@ body {
 
 .button-row {
   height: 50%;
+  width: 100%;
+  text-align: center;
 }
 
 .button-col {
-  height: 35vh;
+  height: 55vh;
   width: 100%;
   display: flex;
 }
 
-#top-left-button {
+#top-left-button, #left-button {
   background-color: red;
 }
 
-#top-right-button {
+#top-right-button, #right-button {
   background-color: blue;
 }
 
@@ -85,23 +87,28 @@ input {
 }
 
 .button-text {
-  padding: 4% 0 3% 0;
   color: white;
-  font-size: 35px;
+  font-size: 50px;
+  height: 100%;
+  margin: auto;
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .two-button-text {
   color: white;
-  font-size: 45px;
+  font-size: 50px;
   width: 50%;
-  height: 40%;
-  overflow: auto;
+  height: 100%;
   margin: auto;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inner-text {
+  margin: auto;
 }
 
 #bottom-button {
