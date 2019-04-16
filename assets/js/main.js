@@ -67,11 +67,11 @@ $("#top-left-button").click(() => {
 });
 
 $("#top-right-button").click(() => {
-    playNote(1);
+  playNote(1);
 });
 
 $("#bottom-right-button").click(() => {
-    playNote(2);
+  playNote(2);
 });
 
 $("#bottom-left-button").click(() => {
@@ -475,3 +475,24 @@ var join_sequences = (note_sequences) => {
     "length": offset
   };
 }
+
+WebMidi.enable(function (err) {
+  if (err) console.log("WebMidi not enabled!", err);
+
+  // midi inputs and outputs
+  console.log(WebMidi.inputs);
+  console.log(WebMidi.outputs);
+
+  var input = WebMidi.getInputByName("MPK Mini Mk II");
+  console.log(input);
+
+  // Listen for a 'note on' message on all channels
+  input.addListener('noteon', "all",
+    function (e) {
+      console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ").");
+      var note = Math.floor(Math.random() * Math.floor(4));
+      console.log(note);
+      playNote(note);
+    }
+  );
+});
