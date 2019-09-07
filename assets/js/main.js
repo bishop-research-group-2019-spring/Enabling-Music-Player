@@ -23,8 +23,7 @@ var key_of_c_pitches = [ //16 notes across one octave up and down from middle c
   77, //F
   79, //G
   81, //A
-  83, //B
-  84, //C
+  83 //B
 ];
 var recording = [];
 var is_recording = false;
@@ -43,11 +42,11 @@ var instruments = {
 var pitch_ranges = {
   drums: {
     upper: 81,
-    lower: 35
+    lower: 48
   },
   non_drums: {
-    upper: 108,
-    lower: 21
+    upper: 83,
+    lower: 48
   }
 }
 var instrument = instruments.drums;
@@ -56,9 +55,9 @@ $(document).ready(function () {
   player = new mm.SoundFontPlayer(
     "https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus"
   );
-  console.log("player obj before caling playNote:");
-  console.log(player);
-  pitches = [59, 60, 62, 64];
+  // console.log("player obj before caling playNote:");
+  // console.log(player);
+  pitches = [59, 48, 62, 64];
 });
 
 //button listeners
@@ -87,8 +86,11 @@ $("#right-button").click(() => {
   playNote(1);
 });
 
-// TODO: Alternative to clicking space to shuffle pitches.
 $("#bottom-button").click(() => {
+  shufflePitches();
+})
+
+$("#two-bottom-button").click(() => {
   shufflePitches();
 })
 
@@ -132,7 +134,7 @@ $(document).keydown(e => {
       }
       break;
 
-    case 32: //space
+    case 90: //Z
       shufflePitches();
       break;
 
@@ -288,21 +290,17 @@ $("#switch-button").click(() => {
 });
 
 $("#stop-button").click(() => {
-  console.log("inside of stop_button.click");
   player.stop();
-  console.log("after call of player.stop()");
 })
 
 $("#play_button").click(() => {
-  console.log(recording);
   let sequence = setSequence();
 
-  console.log("sequence before quantization function");
-  console.log(sequence);
-  console.log("sequence after quantization function");
+  // console.log("sequence before quantization function");
+  // console.log(sequence);
+  // console.log("sequence after quantization function");
 
   sequence = mm.sequences.quantizeNoteSequence(sequence, 4);
-  console.log(sequence)
 
   mm.Player.tone.context.resume();
   player.start(sequence);
@@ -315,19 +313,7 @@ $("#play-magenta").click(() => {
     );
     music_rnn.initialize();
 
-    rnnPlayer = new mm.Player();
-
-    function play() {
-      if (rnnPlayer.isPlaying()) {
-        rnnPlayer.stop();
-        return;
-      }
-    }
-
     let sequence = setSequence();
-
-    console.log("sequence:");
-    console.log(sequence);
 
     let qns = mm.sequences.quantizeNoteSequence(sequence, 4);
     let total_quantized_steps = 0;
@@ -343,18 +329,15 @@ $("#play-magenta").click(() => {
     music_rnn
       .continueSequence(qns, 20, 1.5)
       .then(async (sample) => {
-
         //get all notes from sample with the expected instrument into ml_sequence
         let ml_sequence = sample.notes;
         for (let i = 0; i < ml_sequence.length; i++) {
           ml_sequence[i].program = instrument;
+          ml_sequence[i].isDrum = is_drum;
         }
 
         //will return a new note array with the notes in recording followed by the notes in ml_sequence with the correct timing
         let joined_note_sequence = join_sequences([qns.notes, ml_sequence]);
-        console.log("joined_note_sequence:");
-        console.log(joined_note_sequence);
-
 
         //successfully plays the recorded notes followed by the model genarated notes but has the wrong timing for the recorded notes
         player.start({
@@ -382,7 +365,7 @@ $("#download-button").click(() => {
 
     sequence = mm.sequences.quantizeNoteSequence(sequence, 4);
     let total_quantized_steps = 0;
-    console.log("total_quantized_steps:" + total_quantized_steps);
+    // console.log("total_quantized_steps:" + total_quantized_steps);
     //get the correct number of quantized steps by finding the ending of the last note in qns.notes
     for (let i = 0; i < sequence.notes.length; i++) {
       if (total_quantized_steps < sequence.notes[i].quantizedEndStep) {
@@ -444,8 +427,8 @@ function setSequence() {
 }
 
 var join_sequences = (note_sequences) => {
-  console.log("note_sequences from within join_sequences:");
-  console.log(note_sequences);
+  // console.log("note_sequences from within join_sequences:");
+  // console.log(note_sequences);
   let sequences = note_sequences;
   let joined_sequence = [];
   let offset = 0;
@@ -480,19 +463,19 @@ WebMidi.enable(function (err) {
   if (err) console.log("WebMidi not enabled!", err);
 
   // midi inputs and outputs
-  console.log(WebMidi.inputs);
-  console.log(WebMidi.outputs);
+  // console.log(WebMidi.inputs);
+  // console.log(WebMidi.outputs);
 
-  var input = WebMidi.getInputByName("MPK Mini Mk II");
-  console.log(input);
+  // var input = WebMidi.getInputByName("MPK Mini Mk II");
+  // console.log(input);
 
   // Listen for a 'note on' message on all channels
-  input.addListener('noteon', "all",
-    function (e) {
-      console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ").");
-      var note = Math.floor(Math.random() * Math.floor(4));
-      console.log(note);
-      playNote(note);
-    }
-  );
+  // input.addListener('noteon', "all",
+  //   function (e) {
+  //     console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ").");
+  //     var note = Math.floor(Math.random() * Math.floor(4));
+  //     console.log(note);
+  //     playNote(note);
+  //   }
+  // );
 });

@@ -55,7 +55,7 @@ body {
 }
 
 .button-col {
-  height: 55vh;
+  height: 45vh;
   width: 100%;
   display: flex;
 }
@@ -112,6 +112,11 @@ input {
 }
 
 #bottom-button {
+  width: 85%;
+  background-color: purple;
+}
+
+#two-bottom-button {
   width: 85%;
   background-color: purple;
 }
