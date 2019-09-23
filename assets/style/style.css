@@ -26,7 +26,7 @@ body {
   right: 0;
   bottom: 0;
   background-color: #99badd;
-  z-index: 1000;
+  z-index: 3;
   font-size: 14px;
   overflow-y: auto;
 }
@@ -81,10 +81,10 @@ body {
   letter-spacing: 1px;
   overflow: hidden;
   z-index: 1;
-  transition:         0.18s ease-in;
-  -o-transition:      0.18s ease-in;
-  -ms-transition:     0.18s ease-in;
-  -moz-transition:    0.18s ease-in;
+  transition: 0.18s ease-in;
+  -o-transition: 0.18s ease-in;
+  -ms-transition: 0.18s ease-in;
+  -moz-transition: 0.18s ease-in;
   -webkit-transition: 0.18s ease-in;
 }
 
@@ -271,4 +271,24 @@ input {
 
 .bolder {
   font-weight: 600;
+}
+
+.sound-button {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0 5px;
+  z-index: 1000;
+}
+
+.sound-button label {
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+}
+
+.no-display {
+  display: none;
 }

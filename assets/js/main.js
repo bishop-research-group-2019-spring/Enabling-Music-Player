@@ -6,6 +6,7 @@
 
 // Used to hold the 4 pitches currently being played
 var pitches = [];
+
 // 16 notes across one octave up and down from middle c
 var key_of_c_pitches = [
   48, //C
@@ -31,11 +32,13 @@ var key_of_c_pitches = [
   83 //B
 ];
 var recording = [];
-var is_recording = false; var info_recording = false;
+var is_recording = false;
+var info_recording = false;
 var is_drum = true;
 note_count = 0;
 var key_down = false;
 var two_button_mode = false;
+var sound_on = false;
 // Mapping to of instruments to program vals
 var instruments = {
   drums: 0,
@@ -65,39 +68,91 @@ $(document).ready(function () {
 
 $("#enterApp").click(() => {
   $(".overlay").css("display", "none");
+  if (sound_on) {
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+    }
+    var read_text = $.trim($(".game").text().replace(/[\s+\t]+/g, ' '));
+    var message = new SpeechSynthesisUtterance(read_text);
+    window.speechSynthesis.speak(message);
+  }
 });
 
 // Button listeners
 $("#top-left-button").click(() => {
-  playNote(0);
+  if (sound_on) {
+    speak("S");
+    setTimeout(function () {
+      playNote(0);
+    }, 500);
+  } else {
+    playNote(0);
+  }
 });
 
 $("#top-right-button").click(() => {
-  playNote(1);
+  if (sound_on) {
+    speak("D");
+    setTimeout(function () {
+      playNote(1);
+    }, 500);
+  } else {
+    playNote(1);
+  }
 });
 
 $("#bottom-right-button").click(() => {
-  playNote(2);
+  if (sound_on) {
+    speak("C");
+    setTimeout(function () {
+      playNote(2);
+    }, 500);
+  } else {
+    playNote(2);
+  }
 });
 
 $("#bottom-left-button").click(() => {
-  playNote(3);
+  if (sound_on) {
+    speak("X");
+    setTimeout(function () {
+      playNote(3);
+    }, 500);
+  } else {
+    playNote(3);
+  }
 });
 
 // Two Button Mode
 $("#left-button").click(() => {
-  playNote(0);
+  if (sound_on) {
+    speak("S");
+    setTimeout(function () {
+      playNote(0);
+    }, 500);
+  } else {
+    playNote(0);
+  }
 });
 
 $("#right-button").click(() => {
-  playNote(1);
+  if (sound_on) {
+    speak("D");
+    setTimeout(function () {
+      playNote(1);
+    }, 500);
+  } else {
+    playNote(1);
+  }
 });
 
 $("#bottom-button").click(() => {
+  speak("Z (shuffle)");
   shufflePitches();
 })
 
 $("#two-bottom-button").click(() => {
+  speak("Z (shuffle)");
   shufflePitches();
 })
 
@@ -106,16 +161,28 @@ $(document).keydown(e => {
     case 83: //S
       if (!key_down) {
         key_down = true;
-        playNote(0);
-        console.log("played pitch " + pitches[0]);
+        if (sound_on) {
+          speak("S");
+          setTimeout(function () {
+            playNote(0);
+          }, 500);
+        } else {
+          playNote(0);
+        }
       }
       break;
 
     case 68: //D
       if (!key_down) {
         key_down = true;
-        playNote(1);
-        console.log("played pitch " + pitches[1]);
+        if (sound_on) {
+          speak("D");
+          setTimeout(function () {
+            playNote(1);
+          }, 500);
+        } else {
+          playNote(1);
+        }
       }
       break;
 
@@ -125,8 +192,14 @@ $(document).keydown(e => {
       }
       if (!key_down) {
         key_down = true;
-        playNote(2);
-        console.log("played pitch " + pitches[2]);
+        if (sound_on) {
+          speak("X");
+          setTimeout(function () {
+            playNote(2);
+          }, 500);
+        } else {
+          playNote(2);
+        }
       }
       break;
 
@@ -136,60 +209,88 @@ $(document).keydown(e => {
       }
       if (!key_down) {
         key_down = true;
-        playNote(3);
-        console.log("played pitch " + pitches[3]);
+        if (sound_on) {
+          speak("C");
+          setTimeout(function () {
+            playNote(3);
+          }, 500);
+        } else {
+          playNote(3);
+        }
       }
       break;
 
     case 90: //Z
+      speak("Z (shuffle)");
       shufflePitches();
       break;
 
     case 65: //A
       tabInstrument();
       break;
+    
+    case 82: //R
+      checkRecording();
+      break;
   }
 });
 
 // Change the instrument for clicking tabs
 $('#list-tab a[href="#drums"').click(() => {
+  speak("Drums");
   instrument = instruments.drums;
   is_drum = true;
 });
 
 $('#list-tab a[href="#guitar"').click(() => {
+  speak("Guitar");
   instrument = instruments.guitar;
   is_drum = false;
 });
 
 $('#list-tab a[href="#bass"').click(() => {
+  speak("Bass");
   instrument = instruments.bass;
   is_drum = false;
 });
 
 $('#list-tab a[href="#piano"').click(() => {
+  speak("Piano");
   instrument = instruments.piano;
   is_drum = false;
 });
 
 // Toggles between the instrument list
 function tabInstrument() {
+  var instrumentName = '';
+
   if ($("#drums").hasClass("active")) {
     $('#list-tab a[href="#guitar"').tab("show");
     instrument = instruments.guitar;
+    instrumentName = 'Guitar';
     is_drum = false;
   } else if ($("#guitar").hasClass("active")) {
     $('#list-tab a[href="#bass"').tab("show");
     instrument = instruments.bass;
+    instrumentName = 'Bass';
     is_drum = false;
   } else if ($("#bass").hasClass("active")) {
     $('#list-tab a[href="#piano"').tab("show");
     instrument = instruments.piano;
+    instrumentName = 'Piano';
     is_drum = false;
   } else if ($("#piano").hasClass("active")) {
     $('#list-tab a[href="#drums"').tab("show");
     instrument = instruments.drums;
+    instrumentName = 'Drums';
     is_drum = true;
+  }
+
+  if (sound_on) {
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+    }
+    window.speechSynthesis.speak(new SpeechSynthesisUtterance(instrumentName));
   }
 }
 
@@ -271,16 +372,22 @@ var pitchesDontMatch = () => {
 };
 
 $("#record-button").click(() => {
+  checkRecording();
+});
+
+var checkRecording = () => {
   if (!is_recording) {
     $("#record-button").css("background-color", "#dc3545");
     $("#record-button").css("color", "white");
+    speak("Now recording");
     startRecording();
   } else {
     $("#record-button").css("background-color", "rgb(247,247,247)");
     $("#record-button").css("color", "#dc3545");
+    speak("Stopped recording");
     stopRecording();
   }
-});
+}
 
 $("#info-record-button").click(() => {
   if (!info_recording) {
@@ -299,18 +406,41 @@ $("#switch-button").click(() => {
     $("#big-button-holder").css("display", "none");
     $("#two-button-holder").css("display", "block");
     $('#switch-button').val('Original Mode');
+    speak("Two Button Mode activated.");
     two_button_mode = true;
   } else {
     $("#two-button-holder").css("display", "none");
     $("#big-button-holder").css("display", "block");
     $('#switch-button').val('2 Button Mode');
+    speak("Original Mode activated.");
     two_button_mode = false;
   }
 });
 
 $("#stop-button").click(() => {
   player.stop();
-})
+});
+
+$('#soundMode').change(function () {
+  if (!sound_on) {
+    sound_on = true;
+    var read_text;
+    if ($('.overlay').css('display') != 'none') {
+      read_text = $.trim($(".overlay").text().replace(/[\s+\t]+/g, ' '));
+    } else {
+      read_text = $.trim($(".game").text().replace(/[\s+\t]+/g, ' '));
+    }
+    var message = new SpeechSynthesisUtterance("Sound Mode enabled. " + read_text);
+    window.speechSynthesis.speak(message);
+  } else {
+    sound_on = false;
+    if (window.speechSynthesis.speaking) {
+      // SpeechSyn is currently speaking, cancel the current utterance(s)
+      window.speechSynthesis.cancel();
+    }
+  }
+
+});
 
 $("#play_button").click(() => {
   let sequence = setSequence();
@@ -318,10 +448,18 @@ $("#play_button").click(() => {
   sequence = mm.sequences.quantizeNoteSequence(sequence, 4);
 
   mm.Player.tone.context.resume();
-  player.start(sequence);
+  if (sound_on) {
+    speak("Play.")
+    setTimeout(function () {
+      player.start(sequence);
+    }, 1000);
+  } else {
+    player.start(sequence);
+  }
 });
 
 $("#play-magenta").click(() => {
+  speak("Play with Magenta.");
   if (recording.length > 0) {
     music_rnn = new mm.MusicRNN(
       "https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn"
@@ -354,18 +492,34 @@ $("#play-magenta").click(() => {
         // Will return a new note array with the notes in recording followed by the notes in ml_sequence with the correct timing
         let joined_note_sequence = join_sequences([qns.notes, ml_sequence]);
 
-        // Successfully plays the recorded notes followed by the model genarated notes but has the wrong timing for the recorded notes
-        player.start({
-          notes: joined_note_sequence.sequence,
-          quantizationInfo: {
-            stepsPerQuarter: 4
-          },
-          teompo: [{
-            time: 0,
-            qpm: 120
-          }],
-          totalQuantizedSteps: joined_note_sequence.length
-        })
+        if (sound_on) {
+          setTimeout(function () {
+            player.start({
+              notes: joined_note_sequence.sequence,
+              quantizationInfo: {
+                stepsPerQuarter: 4
+              },
+              teompo: [{
+                time: 0,
+                qpm: 120
+              }],
+              totalQuantizedSteps: joined_note_sequence.length
+            })
+          }, 500);
+        } else {
+          // Successfully plays the recorded notes followed by the model genarated notes but has the wrong timing for the recorded notes
+          player.start({
+            notes: joined_note_sequence.sequence,
+            quantizationInfo: {
+              stepsPerQuarter: 4
+            },
+            teompo: [{
+              time: 0,
+              qpm: 120
+            }],
+            totalQuantizedSteps: joined_note_sequence.length
+          })
+        }
       });
 
   }
@@ -374,8 +528,9 @@ $("#play-magenta").click(() => {
 // Converts the recorded sequence to a midi file.
 $("#download-button").click(() => {
   if (recording.length == 0) {
-    alert("Please finish recording before downloading.");
+    speak("Download.")
   } else {
+    speak("Now downloading.");
     let sequence = setSequence();
 
     sequence = mm.sequences.quantizeNoteSequence(sequence, 4);
@@ -470,6 +625,17 @@ var join_sequences = (note_sequences) => {
     "sequence": joined_sequence,
     "length": offset
   };
+}
+
+var speak = (text) => {
+  if (sound_on) {
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+    }
+    var read_text = $.trim(text.replace(/[\s+\t]+/g, ' '));
+    var message = new SpeechSynthesisUtterance(read_text);
+    window.speechSynthesis.speak(message);
+  }
 }
 
 // WebMidi.enable(function (err) {
