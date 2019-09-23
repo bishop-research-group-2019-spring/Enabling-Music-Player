@@ -15,6 +15,7 @@ note_count = 0;
 var key_down = false;
 var two_button_mode = false;
 var sound_on = false;
+var play_note_called = false;
 // Mapping to of instruments to program vals
 var instruments = {
   drums: 0,
@@ -204,7 +205,7 @@ $(document).keydown(e => {
     case 65: //A
       tabInstrument();
       break;
-    
+
     case 82: //R
       checkRecording();
       break;
@@ -291,45 +292,48 @@ var shufflePitches = () => {
 };
 
 var playNote = index => {
-
-  mm.Player.tone.context.resume();
-  let note = {
-    pitch: pitches[index],
-    startTime: 0,
-    endTime: 0.3,
-    program: instrument,
-    isDrum: is_drum
-  };
-
-  if (is_recording) {
-    let note_in_context = {
+  if (!play_note_called) {
+    play_note_called = true;
+    mm.Player.tone.context.resume();
+    let note = {
       pitch: pitches[index],
-      startTime: note_count,
-      endTime: note_count + 0.5,
-      // quantizedStartStep: note_count,
-      // quantizedEndStep: note_count + 2,
+      startTime: 0,
+      endTime: 0.3,
       program: instrument,
       isDrum: is_drum
     };
-    recording.push(note_in_context);
-    note_count = note_count + 0.5;
+
+    if (is_recording) {
+      let note_in_context = {
+        pitch: pitches[index],
+        startTime: note_count,
+        endTime: note_count + 0.5,
+        // quantizedStartStep: note_count,
+        // quantizedEndStep: note_count + 2,
+        program: instrument,
+        isDrum: is_drum
+      };
+      recording.push(note_in_context);
+      note_count = note_count + 0.5;
+    }
+
+    player.start({
+      notes: [note],
+      quantizationInfo: {
+        stepsPerQuarter: 4
+      },
+      tempos: [{
+        time: 0,
+        qpm: 120
+      }],
+      totalQuantizedSteps: 2
+    });
+
+    setTimeout(function () {
+      key_down = false;
+      play_note_called = false;
+    }, 330);
   }
-
-  player.start({
-    notes: [note],
-    quantizationInfo: {
-      stepsPerQuarter: 4
-    },
-    tempos: [{
-      time: 0,
-      qpm: 120
-    }],
-    totalQuantizedSteps: 2
-  });
-
-  setTimeout(function () {
-    key_down = false;
-  }, 330);
 };
 
 var pitchesDontMatch = () => {
