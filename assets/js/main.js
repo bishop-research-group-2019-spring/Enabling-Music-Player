@@ -7,30 +7,6 @@
 // Used to hold the 4 pitches currently being played
 var pitches = [];
 
-// 16 notes across one octave up and down from middle c
-var key_of_c_pitches = [
-  48, //C
-  50, //D
-  52, //E
-  53, //F
-  55, //G
-  57, //A
-  59, //B
-  60, //middle C
-  62, //D
-  64, //E
-  65, //F
-  67, //G
-  69, //A
-  71, //B
-  72, //C
-  74, //D
-  76, //E
-  77, //F
-  79, //G
-  81, //A
-  83 //B
-];
 var recording = [];
 var is_recording = false;
 var info_recording = false;
@@ -302,8 +278,7 @@ var shufflePitches = () => {
     }
   } else {
     for (let i = 0; i < pitches.length; i++) {
-      let index = Math.floor((Math.random() * 100) % key_of_c_pitches.length);
-      pitches[i] = key_of_c_pitches[index];
+      pitches[i] = Math.floor(pitch_ranges.non_drums.lower + ((Math.random() * 100) % (pitch_ranges.non_drums.upper - pitch_ranges.non_drums.lower)));
     }
   }
 
