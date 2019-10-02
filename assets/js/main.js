@@ -209,6 +209,14 @@ $(document).keydown(e => {
     case 82: //R
       checkRecording();
       break;
+
+    case 80: //P
+      playSequence();
+      break;
+
+    case 77: //M
+      playMagenta();
+      break;
   }
 });
 
@@ -293,6 +301,8 @@ var shufflePitches = () => {
 
 var playNote = index => {
   if (!play_note_called) {
+    // Stop the player for every previous play.
+    player.stop()
     play_note_called = true;
     mm.Player.tone.context.resume();
     let note = {
@@ -422,6 +432,10 @@ $('#soundMode').change(function () {
 });
 
 $("#play_button").click(() => {
+  playSequence()
+});
+
+var playSequence = () => {
   let sequence = setSequence();
 
   sequence = mm.sequences.quantizeNoteSequence(sequence, 4);
@@ -435,58 +449,48 @@ $("#play_button").click(() => {
   } else {
     player.start(sequence);
   }
-});
+};
 
 $("#play-magenta").click(() => {
-  speak("Play with Magenta.");
-  if (recording.length > 0) {
-    music_rnn = new mm.MusicRNN(
-      "https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn"
-    );
-    music_rnn.initialize();
+  playMagenta();
+});
 
-    let sequence = setSequence();
+var playMagenta = () => {
+speak("Play with Magenta.");
+if (recording.length > 0) {
+  music_rnn = new mm.MusicRNN(
+    "https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn"
+  );
+  music_rnn.initialize();
 
-    let qns = mm.sequences.quantizeNoteSequence(sequence, 4);
-    let total_quantized_steps = 0;
-    // Get the correct number of quantized steps by finding the ending of the last note in qns.notes
-    for (let i = 0; i < qns.notes.length; i++) {
-      if (total_quantized_steps < qns.notes[i].quantizedEndStep) {
-        total_quantized_steps = qns.notes[i].quantizedEndStep;
-      }
+  let sequence = setSequence();
+
+  let qns = mm.sequences.quantizeNoteSequence(sequence, 4);
+  let total_quantized_steps = 0;
+  // Get the correct number of quantized steps by finding the ending of the last note in qns.notes
+  for (let i = 0; i < qns.notes.length; i++) {
+    if (total_quantized_steps < qns.notes[i].quantizedEndStep) {
+      total_quantized_steps = qns.notes[i].quantizedEndStep;
     }
+  }
 
-    qns.totalQuantizedSteps = total_quantized_steps;
+  qns.totalQuantizedSteps = total_quantized_steps;
 
-    music_rnn
-      .continueSequence(qns, 20, 1.5)
-      .then(async (sample) => {
-        // Get all notes from sample with the expected instrument into ml_sequence
-        let ml_sequence = sample.notes;
-        for (let i = 0; i < ml_sequence.length; i++) {
-          ml_sequence[i].program = instrument;
-          ml_sequence[i].isDrum = is_drum;
-        }
+  music_rnn
+    .continueSequence(qns, 20, 1.5)
+    .then(async (sample) => {
+      // Get all notes from sample with the expected instrument into ml_sequence
+      let ml_sequence = sample.notes;
+      for (let i = 0; i < ml_sequence.length; i++) {
+        ml_sequence[i].program = instrument;
+        ml_sequence[i].isDrum = is_drum;
+      }
 
-        // Will return a new note array with the notes in recording followed by the notes in ml_sequence with the correct timing
-        let joined_note_sequence = join_sequences([qns.notes, ml_sequence]);
+      // Will return a new note array with the notes in recording followed by the notes in ml_sequence with the correct timing
+      let joined_note_sequence = join_sequences([qns.notes, ml_sequence]);
 
-        if (sound_on) {
-          setTimeout(function () {
-            player.start({
-              notes: joined_note_sequence.sequence,
-              quantizationInfo: {
-                stepsPerQuarter: 4
-              },
-              teompo: [{
-                time: 0,
-                qpm: 120
-              }],
-              totalQuantizedSteps: joined_note_sequence.length
-            })
-          }, 500);
-        } else {
-          // Successfully plays the recorded notes followed by the model genarated notes but has the wrong timing for the recorded notes
+      if (sound_on) {
+        setTimeout(function () {
           player.start({
             notes: joined_note_sequence.sequence,
             quantizationInfo: {
@@ -498,11 +502,24 @@ $("#play-magenta").click(() => {
             }],
             totalQuantizedSteps: joined_note_sequence.length
           })
-        }
-      });
-
+        }, 500);
+      } else {
+        // Successfully plays the recorded notes followed by the model genarated notes but has the wrong timing for the recorded notes
+        player.start({
+          notes: joined_note_sequence.sequence,
+          quantizationInfo: {
+            stepsPerQuarter: 4
+          },
+          teompo: [{
+            time: 0,
+            qpm: 120
+          }],
+          totalQuantizedSteps: joined_note_sequence.length
+        })
+      }
+    });
   }
-});
+};
 
 // Converts the recorded sequence to a midi file.
 $("#download-button").click(() => {
