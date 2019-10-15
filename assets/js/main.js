@@ -45,6 +45,7 @@ $(document).ready(function () {
 
 $("#enterApp").click(() => {
   $(".overlay").css("display", "none");
+  $(".game").css("display", "block");
   if (sound_on) {
     if (window.speechSynthesis.speaking) {
       window.speechSynthesis.cancel();
@@ -431,7 +432,7 @@ $('#soundMode').change(function () {
 
 });
 
-$("#play_button").click(() => {
+$("#play-button").click(() => {
   playSequence()
 });
 

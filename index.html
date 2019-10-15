@@ -41,21 +41,21 @@
         <h5>Record Your Melody</h5>
         <ul>
           <li>Click <input type="button" id="info-record-button" class="btn btn-outline-danger info-button"
-              value="Record"></input> or
+              value="Record" tabindex="-1"></input> or
             press <b>'r'</b> to start recording. To stop recording, click the button again.</li>
         </ul>
         <h5>Main Features</h5>
         <ul>
-          <li><input type="button" class="btn btn-outline-success info-button" value="Download"></input><span
-              class="no-display">Download</span>
+          <li><input type="button" class="btn btn-outline-success info-button" value="Download"
+              tabindex="-1"></input><span class="no-display">Download</span>
             saves your original note sequence to your device as a MIDI file.</li>
-          <li><input type="button" class="btn btn-outline-primary info-button" value="Play with Magenta"></input><span
-              class="no-display">Play with Magenta</span>
+          <li><input type="button" class="btn btn-outline-primary info-button" value="Play with Magenta"
+              tabindex="-1"></input><span class="no-display">Play with Magenta</span>
             continues your recorded note sequence using Machine Learning.</li>
-          <li><input type="button" class="btn btn-outline-dark info-button" value="2 Button Mode"></input><span
-              class="no-display">2 Button Mode</span> gives the
+          <li><input type="button" class="btn btn-outline-dark info-button" value="2 Button Mode"
+              tabindex="-1"></input><span class="no-display">2 Button Mode</span> gives the
             accessible option of playing notes with two larger buttons.</li>
-          <li>The <img class="info-play" src="assets/images/play-button-512.png" value="play"><span
+          <li>The <input type="button" class="btn btn-outline-info info-button" value="Play" tabindex="-1"></input><span
               class="no-display">Play</span> button plays your original
             recorded sequence.</li>
         </ul>
@@ -156,17 +156,14 @@
             </div>
           </div>
 
-          <span class="no-display">. Features include: Record button or click 'r', Download button, Play with Magenta or click 'm',
+          <span class="no-display">. Features include: Record button or click 'r', Download button, Play with Magenta or
+            click 'm',
             Play button or click 'p', Two Button Mode.</span>
           <div class="controls">
             <input id="record-button" type="button" class="btn btn-outline-danger" value="Record"></input>
             <input id="download-button" type="button" class="btn btn-outline-success" value="Download"></input>
             <input id="play-magenta" type="button" class="btn btn-outline-primary" value="Play with Magenta"></input>
-            <div class="recording-holder">
-              <div class="audio-control-holder">
-                <img class="audio-control" src="assets/images/play-button-512.png" id="play_button">
-              </div>
-            </div>
+            <input id="play-button" type="button" class="btn btn-outline-info" value="Play"></input>
             <input id="switch-button" type="button" class="btn btn-outline-dark" value="2 Button Mode"></input>
           </div>
         </div>

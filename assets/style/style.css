@@ -125,6 +125,7 @@ body {
 
 .game {
   z-index: -1;
+  display: none;
 }
 
 .controls {
@@ -134,6 +135,10 @@ body {
   -webkit-flex-wrap: wrap;
   flex-wrap: wrap;
   z-index: 2;
+}
+
+.controls>input {
+  margin: 5px;
 }
 
 .instruments {
@@ -248,25 +253,6 @@ input {
 #two-bottom-button {
   width: 85%;
   background-color: purple;
-}
-
-.recording-holder {
-  margin-top: 1%;
-  margin-bottom: 2%;
-}
-
-.audio-control {
-  width: 25px;
-  height: 25px;
-  margin-top: 5px;
-}
-
-.audio-control:hover {
-  cursor: pointer;
-}
-
-.audio-control-holder {
-  display: inline-block;
 }
 
 .bolder {
