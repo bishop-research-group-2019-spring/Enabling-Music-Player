@@ -43,9 +43,12 @@ $(document).ready(function () {
   pitches = [59, 48, 62, 64];
 });
 
-$("#enterApp").click(() => {
+$("#enterApp").click(() => enterApp());
+
+var enterApp = () => {
   $(".overlay").css("display", "none");
   $(".game").css("display", "block");
+  $("#soundModeCtr").addClass("hover");
   if (sound_on) {
     if (window.speechSynthesis.speaking) {
       window.speechSynthesis.cancel();
@@ -54,12 +57,12 @@ $("#enterApp").click(() => {
     var message = new SpeechSynthesisUtterance(read_text);
     window.speechSynthesis.speak(message);
   }
-});
+}
 
 // Button listeners
 $("#top-left-button").click(() => {
   if (sound_on) {
-    speak("S");
+    speak("X");
     setTimeout(function () {
       playNote(0);
     }, 500);
@@ -70,7 +73,7 @@ $("#top-left-button").click(() => {
 
 $("#top-right-button").click(() => {
   if (sound_on) {
-    speak("D");
+    speak("C");
     setTimeout(function () {
       playNote(1);
     }, 500);
@@ -81,7 +84,7 @@ $("#top-right-button").click(() => {
 
 $("#bottom-right-button").click(() => {
   if (sound_on) {
-    speak("C");
+    speak("B");
     setTimeout(function () {
       playNote(2);
     }, 500);
@@ -92,7 +95,7 @@ $("#bottom-right-button").click(() => {
 
 $("#bottom-left-button").click(() => {
   if (sound_on) {
-    speak("X");
+    speak("V");
     setTimeout(function () {
       playNote(3);
     }, 500);
@@ -104,7 +107,7 @@ $("#bottom-left-button").click(() => {
 // Two Button Mode
 $("#left-button").click(() => {
   if (sound_on) {
-    speak("S");
+    speak("X");
     setTimeout(function () {
       playNote(0);
     }, 500);
@@ -115,7 +118,7 @@ $("#left-button").click(() => {
 
 $("#right-button").click(() => {
   if (sound_on) {
-    speak("D");
+    speak("C");
     setTimeout(function () {
       playNote(1);
     }, 500);
@@ -136,11 +139,11 @@ $("#two-bottom-button").click(() => {
 
 $(document).keydown(e => {
   switch (e.which) {
-    case 83: //S
+    case 88: //X
       if (!key_down) {
         key_down = true;
         if (sound_on) {
-          speak("S");
+          speak("X");
           setTimeout(function () {
             playNote(0);
           }, 500);
@@ -150,11 +153,11 @@ $(document).keydown(e => {
       }
       break;
 
-    case 68: //D
+    case 67: //C
       if (!key_down) {
         key_down = true;
         if (sound_on) {
-          speak("D");
+          speak("C");
           setTimeout(function () {
             playNote(1);
           }, 500);
@@ -164,14 +167,14 @@ $(document).keydown(e => {
       }
       break;
 
-    case 88: //X
+    case 86: //V
       if (two_button_mode) {
         break;
       }
       if (!key_down) {
         key_down = true;
         if (sound_on) {
-          speak("X");
+          speak("V");
           setTimeout(function () {
             playNote(2);
           }, 500);
@@ -181,14 +184,14 @@ $(document).keydown(e => {
       }
       break;
 
-    case 67: //C
+    case 66: //B
       if (two_button_mode) {
         break;
       }
       if (!key_down) {
         key_down = true;
         if (sound_on) {
-          speak("C");
+          speak("B");
           setTimeout(function () {
             playNote(3);
           }, 500);
@@ -202,24 +205,65 @@ $(document).keydown(e => {
       speak("Z (shuffle)");
       shufflePitches();
       break;
-
-    case 65: //A
-      tabInstrument();
+    case 37: //left
+      tabKey("back");
       break;
-
-    case 82: //R
-      checkRecording();
+    case 38: //up
+      tabPress();
       break;
-
-    case 80: //P
-      playSequence();
+    case 39: //right
+      tabKey("forward");
       break;
-
-    case 77: //M
-      playMagenta();
+    case 40: //down
+      tabPress();
       break;
   }
 });
+
+// Accessible navigation for blind users
+var tabKey = (direction) => {
+  // Instructions
+  if ($('.overlay').css('display') != 'none') {
+    if ($('#soundModeCtr').hasClass('hover')) {
+      $('#soundModeCtr').removeClass('hover');
+      $('#enterApp').addClass('hover');
+    } else {
+      $('#enterApp').removeClass('hover');
+      $('#soundModeCtr').addClass('hover');
+    }
+  } else {
+    // Game mode
+    var elements = document.getElementsByClassName('hoverable');
+    for (var i = 0; i < elements.length; i++) {
+      if (elements[i].classList.contains('hover')) {
+        elements[i].classList.remove('hover');
+        direction == "forward" ? elements[(i + 1) % elements.length].classList.add('hover') : elements[((i - 1) % elements.length + elements.length) % elements.length].classList.add('hover');
+        break;
+      }
+    }
+  }
+};
+
+var tabPress = () => {
+
+  if ($('#soundModeCtr').hasClass('hover')) {
+    $('#soundMode').trigger('click');
+    return;
+  }
+
+  if ($('.overlay').css('display') != 'none') {
+    enterApp();
+  } else {
+    // Game mode
+    var elements = document.getElementsByClassName('hoverable');
+    for (var i = 0; i < elements.length; i++) {
+      if (elements[i].classList.contains('hover')) {
+        $('#'+elements[i].id).trigger('click');
+        break;
+      }
+    }
+  }
+};
 
 // Change the instrument for clicking tabs
 $('#list-tab a[href="#drums"').click(() => {
@@ -245,40 +289,6 @@ $('#list-tab a[href="#piano"').click(() => {
   instrument = instruments.piano;
   is_drum = false;
 });
-
-// Toggles between the instrument list
-function tabInstrument() {
-  var instrumentName = '';
-
-  if ($("#drums").hasClass("active")) {
-    $('#list-tab a[href="#guitar"').tab("show");
-    instrument = instruments.guitar;
-    instrumentName = 'Guitar';
-    is_drum = false;
-  } else if ($("#guitar").hasClass("active")) {
-    $('#list-tab a[href="#bass"').tab("show");
-    instrument = instruments.bass;
-    instrumentName = 'Bass';
-    is_drum = false;
-  } else if ($("#bass").hasClass("active")) {
-    $('#list-tab a[href="#piano"').tab("show");
-    instrument = instruments.piano;
-    instrumentName = 'Piano';
-    is_drum = false;
-  } else if ($("#piano").hasClass("active")) {
-    $('#list-tab a[href="#drums"').tab("show");
-    instrument = instruments.drums;
-    instrumentName = 'Drums';
-    is_drum = true;
-  }
-
-  if (sound_on) {
-    if (window.speechSynthesis.speaking) {
-      window.speechSynthesis.cancel();
-    }
-    window.speechSynthesis.speak(new SpeechSynthesisUtterance(instrumentName));
-  }
-}
 
 // Get 4 new pitches with values between 1 and 100
 var shufflePitches = () => {
@@ -429,7 +439,6 @@ $('#soundMode').change(function () {
       window.speechSynthesis.cancel();
     }
   }
-
 });
 
 $("#play-button").click(() => {
@@ -457,41 +466,55 @@ $("#play-magenta").click(() => {
 });
 
 var playMagenta = () => {
-speak("Play with Magenta.");
-if (recording.length > 0) {
-  music_rnn = new mm.MusicRNN(
-    "https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn"
-  );
-  music_rnn.initialize();
+  speak("Play with Magenta.");
+  if (recording.length > 0) {
+    music_rnn = new mm.MusicRNN(
+      "https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/basic_rnn"
+    );
+    music_rnn.initialize();
 
-  let sequence = setSequence();
+    let sequence = setSequence();
 
-  let qns = mm.sequences.quantizeNoteSequence(sequence, 4);
-  let total_quantized_steps = 0;
-  // Get the correct number of quantized steps by finding the ending of the last note in qns.notes
-  for (let i = 0; i < qns.notes.length; i++) {
-    if (total_quantized_steps < qns.notes[i].quantizedEndStep) {
-      total_quantized_steps = qns.notes[i].quantizedEndStep;
-    }
-  }
-
-  qns.totalQuantizedSteps = total_quantized_steps;
-
-  music_rnn
-    .continueSequence(qns, 20, 1.5)
-    .then(async (sample) => {
-      // Get all notes from sample with the expected instrument into ml_sequence
-      let ml_sequence = sample.notes;
-      for (let i = 0; i < ml_sequence.length; i++) {
-        ml_sequence[i].program = instrument;
-        ml_sequence[i].isDrum = is_drum;
+    let qns = mm.sequences.quantizeNoteSequence(sequence, 4);
+    let total_quantized_steps = 0;
+    // Get the correct number of quantized steps by finding the ending of the last note in qns.notes
+    for (let i = 0; i < qns.notes.length; i++) {
+      if (total_quantized_steps < qns.notes[i].quantizedEndStep) {
+        total_quantized_steps = qns.notes[i].quantizedEndStep;
       }
+    }
 
-      // Will return a new note array with the notes in recording followed by the notes in ml_sequence with the correct timing
-      let joined_note_sequence = join_sequences([qns.notes, ml_sequence]);
+    qns.totalQuantizedSteps = total_quantized_steps;
 
-      if (sound_on) {
-        setTimeout(function () {
+    music_rnn
+      .continueSequence(qns, 20, 1.5)
+      .then(async (sample) => {
+        // Get all notes from sample with the expected instrument into ml_sequence
+        let ml_sequence = sample.notes;
+        for (let i = 0; i < ml_sequence.length; i++) {
+          ml_sequence[i].program = instrument;
+          ml_sequence[i].isDrum = is_drum;
+        }
+
+        // Will return a new note array with the notes in recording followed by the notes in ml_sequence with the correct timing
+        let joined_note_sequence = join_sequences([qns.notes, ml_sequence]);
+
+        if (sound_on) {
+          setTimeout(function () {
+            player.start({
+              notes: joined_note_sequence.sequence,
+              quantizationInfo: {
+                stepsPerQuarter: 4
+              },
+              teompo: [{
+                time: 0,
+                qpm: 120
+              }],
+              totalQuantizedSteps: joined_note_sequence.length
+            })
+          }, 500);
+        } else {
+          // Successfully plays the recorded notes followed by the model genarated notes but has the wrong timing for the recorded notes
           player.start({
             notes: joined_note_sequence.sequence,
             quantizationInfo: {
@@ -503,22 +526,8 @@ if (recording.length > 0) {
             }],
             totalQuantizedSteps: joined_note_sequence.length
           })
-        }, 500);
-      } else {
-        // Successfully plays the recorded notes followed by the model genarated notes but has the wrong timing for the recorded notes
-        player.start({
-          notes: joined_note_sequence.sequence,
-          quantizationInfo: {
-            stepsPerQuarter: 4
-          },
-          teompo: [{
-            time: 0,
-            qpm: 120
-          }],
-          totalQuantizedSteps: joined_note_sequence.length
-        })
-      }
-    });
+        }
+      });
   }
 };
 
